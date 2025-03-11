@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  .container
+    h1 Lista de Despesas
+    a.btn.btn-primary(href="/despesas/add") Adicionar Nova Despesa
+    table
+      thead
+        tr
+          th Data
+          th Descrição
+          th Categoria
+          th.text-center Quantidade
+          th.text-center Valor Unitário (R$)
+          th.text-center Valor Total (R$)
+          th.text-center Ações
+      tbody
+        each despesa in despesas
+          tr
+            td= new Date(despesa.get('data')).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+            td= despesa.get('descricao')
+            td= despesa.get('categoria') ? despesa.get('categoria').get('descricao') : 'N/A'
+            td.text-center= despesa.get('quantidade') || 'N/A'
+            td.text-center= despesa.get('vl_unitario') ? despesa.get('vl_unitario').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
+            td.text-center= (despesa.get('quantidade') && despesa.get('vl_unitario')) ? (despesa.get('quantidade') * despesa.get('vl_unitario')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
+            td.text-center
+              form(action=`/despesas/${despesa.id}/edit` method="GET" style="display:inline; margin-right: 5px;")
+                button.btn.btn-warning(type="submit") Editar
+              form(action=`/despesas/${despesa.id}/delete` method="POST" style="display:inline;")
+                button.btn.btn-danger(type="submit") Excluir
+        tr
+          td(colspan="5") Total de despesas
+          td.text-center= despesas.reduce((sum, despesa) => sum + (despesa.get('quantidade') && despesa.get('vl_unitario') ? despesa.get('quantidade') * despesa.get('vl_unitario') : 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+          td
+    a.btn.btn-secondary(href="/") Voltar

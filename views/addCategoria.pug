@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  .container
+    h1 Adicionar Categoria
+    form(action="/categorias/add" method="POST")
+      .form-group
+        label(for="descricao") Descrição
+        input#descricao.form-control(type="text" name="descricao" required)
+      .form-group
+        button.btn.btn-secondary(type="button" onclick="window.location.href='/categorias'" style="display:inline; margin-right: 5px;") Voltar
+        button.btn.btn-primary(type="submit") Adicionar

@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+  .container
+    h1 Lista de Pessoas
+    a.btn.btn-primary(href="/pessoas/add") Adicionar Nova Pessoa
+    table
+      thead
+        tr
+          th Nome
+          th Tipo
+          th.text-center Ações
+      tbody
+        each pessoa in pessoas
+          tr
+            td= pessoa.get('nome')
+            td= pessoa.get('tipo')
+            td.text-center
+              form(action=`/pessoas/${pessoa.id}/edit` method="GET" style="display:inline; margin-right: 5px;")
+                button.btn.btn-warning(type="submit") Editar
+              form(action=`/pessoas/${pessoa.id}/delete` method="POST" style="display:inline;")
+                button.btn.btn-danger(type="submit") Excluir
+    a.btn.btn-secondary(href="/") Voltar

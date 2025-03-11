@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  .container
+    h1 Adicionar Despesa
+    form(action="/despesas/add" method="POST")
+      .form-group
+        label(for="data") Data
+        input#data.form-control(type="date" name="data" value=(new Date()).toISOString().split('T')[0] required)
+      .form-group
+        label(for="descricao") Descrição
+        input#descricao.form-control(type="text" name="descricao" required)
+      .form-group
+        label(for="quantidade") Quantidade
+        input#quantidade.form-control(type="number" name="quantidade" required)
+      .form-group
+        label(for="vl_unitario") Valor Unitário (R$)
+        input#vl_unitario.form-control(type="number" step="0.01" name="vl_unitario" required)
+      .form-group
+        label(for="categoria") Categoria
+        select#categoria.form-control(name="categoriaId" required)
+          each categoria in categorias
+            option(value=categoria.id)= categoria.get('descricao')
+      .form-group
+        button.btn.btn-secondary(type="button" onclick="window.location.href='/despesas'" style="display:inline; margin-right: 5px;") Voltar
+        button.btn.btn-primary(type="submit") Adicionar

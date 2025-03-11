@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  .container
+    h1 Lista de Categorias
+    a.btn.btn-primary(href="/categorias/add") Adicionar Nova Categoria
+    table
+      thead
+        tr
+          th Descrição
+          th.text-center Ações
+      tbody
+        each categoria in categorias
+          tr
+            td= categoria.get('descricao')
+            td.text-center
+              form(action=`/categorias/${categoria.id}/edit` method="GET" style="display:inline; margin-right: 5px;")
+                button.btn.btn-warning(type="submit") Editar
+              form(action=`/categorias/${categoria.id}/delete` method="POST" style="display:inline;")
+                button.btn.btn-danger(type="submit") Excluir
+    a.btn.btn-secondary(href="/") Voltar

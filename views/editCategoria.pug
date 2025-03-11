@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  .container
+    h1 Editar Categoria
+    .form-container
+      form(action=`/categorias/${categoria.id}/edit` method="POST")
+        .form-group
+          label(for="descricao") Descrição
+          input#descricao.form-control(type="text" name="descricao" value=categoria.get('descricao') required)
+        .form-group
+          button.btn.btn-secondary(type="button" onclick="window.location.href='/categorias'" style="display:inline; margin-right: 5px;") Voltar
+          button.btn.btn-primary(type="submit") Salvar

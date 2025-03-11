@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+  .container
+    h1 Editar Pessoa
+    form(action=`/pessoas/${pessoa.id}/edit` method="POST")
+      .form-group
+        label(for="nome") Nome
+        input#nome.form-control(type="text" name="nome" value=pessoa.get('nome') required)
+      .form-group
+        label(for="tipo") Tipo
+        select.form-control(name="tipo" required)
+          option(value="") Selecione o Tipo
+          option(value="Sócio" selected=pessoa.get('tipo') === 'Sócio') Sócio
+          option(value="Cliente" selected=pessoa.get('tipo') === 'Cliente') Cliente
+      .form-group
+        button.btn.btn-secondary(type="button" onclick="window.location.href='/pessoas'" style="display:inline; margin-right: 5px;") Voltar
+        button.btn.btn-primary(type="submit") Salvar

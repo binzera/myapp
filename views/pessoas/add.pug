@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+  .container
+    h1 Adicionar Nova Pessoa
+    form(action="/pessoas/add" method="POST")
+      .form-group
+        label(for="nome") Nome
+        input#nome.form-control(type="text" name="nome" required)
+      .form-group
+        label(for="tipo") Tipo
+        select.form-control(name="tipo" required)
+          option(value="") Selecione o Tipo
+          option(value="Sócio") Sócio
+          option(value="Cliente") Cliente
+      .form-group
+        button.btn.btn-secondary(type="button" onclick="window.location.href='/pessoas'" style="display:inline; margin-right: 5px;") Voltar
+        button.btn.btn-primary(type="submit") Adicionar
