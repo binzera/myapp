@@ -40,14 +40,49 @@ router.get('/json', async (req, res) => {
 
 // Rota para renderizar a view com a lista de despesas
 router.get('/', async (req, res) => {
-    const query = new Parse.Query(Despesa);
-    query.include('categoria');
-    try {
-        const despesas = await query.find();
-        res.render('despesas', { despesas });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+  const Despesa = Parse.Object.extend('Despesa');
+  const Categoria = Parse.Object.extend('Categoria');
+  const anos = [];
+  let anoSelecionado = req.query.ano;
+console.log('Ano selecionado:', anoSelecionado);
+  if (anoSelecionado == 0) {
+    anoSelecionado = null;
+  } else if (!anoSelecionado) {
+    anoSelecionado = new Date().getFullYear().toString();
+  }
+
+  try {
+    const queryAnos = new Parse.Query(Despesa);
+    queryAnos.ascending('data');
+    let anoInicial = await queryAnos.first();
+    anoInicial = anoInicial.get('data').getFullYear();
+    const anoAtual = new Date().getFullYear();
+    for (let ano = anoInicial; ano <= anoAtual; ano++) {
+      anos.push(ano);
     }
+
+    const query = new Parse.Query(Despesa);
+    // Filtra por ano no backend
+    if (anoSelecionado) {
+      const startDate = new Date(`${anoSelecionado}-01-01T00:00:00.000Z`);
+      const endDate = new Date(`${anoSelecionado}-12-31T23:59:59.999Z`);
+      query.greaterThanOrEqualTo('data', startDate);
+      query.lessThanOrEqualTo('data', endDate);
+    }
+    const despesas = await query.find();
+    const categoriasQuery = new Parse.Query(Categoria);
+    const categorias = await categoriasQuery.find();
+    const categoriasMap = {};
+    categorias.forEach(categoria => {
+      categoriasMap[categoria.id] = categoria.get('descricao');
+    });
+    despesas.forEach(despesa => {
+      despesa.set('categoriaNome', categoriasMap[despesa.get('categoria')]);
+    });
+    res.render('despesas/index', { despesas, anoSelecionado, anos });
+  } catch (err) {
+    res.status(500).render('error', { message: 'Erro ao listar despesas', error: err });
+  }
 });
 
 // Rota para exibir o formulário de inserção de despesas
@@ -62,40 +97,35 @@ router.get('/add', async function(req, res, next) {
 });
 
 // Rota para processar o formulário de inserção de despesas
-router.post('/add', async function(req, res, next) {
-    const { data, descricao, quantidade, vl_unitario, categoriaId } = req.body;
-    const categoria = new Parse.Object('Categoria');
-    categoria.id = categoriaId;
-
-    const newDespesa = new Despesa();
-    newDespesa.set('data', new Date(data));
-    newDespesa.set('descricao', descricao);
-    newDespesa.set('quantidade', parseInt(quantidade));
-    newDespesa.set('vl_unitario', parseFloat(vl_unitario));
-    newDespesa.set('vl_total', quantidade * vl_unitario);
-    newDespesa.set('categoria', categoria);
-
-    try {
-        await newDespesa.save();
-        res.redirect('/despesas');
-    } catch (error) {
-        next(error);
-    }
+router.post('/add', async (req, res) => {
+  const { data, descricao, quantidade, vl_unitario, categoria } = req.body;
+  const Despesa = Parse.Object.extend('Despesa');
+  const despesa = new Despesa();
+  despesa.set('data', new Date(data));
+  despesa.set('descricao', descricao);
+  despesa.set('quantidade', parseFloat(quantidade));
+  despesa.set('vl_unitario', parseFloat(vl_unitario));
+  despesa.set('vl_total', parseFloat(quantidade) * parseFloat(vl_unitario));
+  despesa.set('categoria', categoria);
+  try {
+    await despesa.save();
+    res.redirect('/despesas');
+  } catch (err) {
+    res.status(500).render('error', { message: 'Erro ao adicionar despesa', error: err });
+  }
 });
 
 // Rota para excluir uma despesa
-router.post('/:id/delete', function(req, res, next) {
-  const despesaId = req.params.id;
-
+router.post('/:id/delete', async (req, res) => {
   const Despesa = Parse.Object.extend('Despesa');
   const query = new Parse.Query(Despesa);
-
-  query.get(despesaId)
-    .then(despesa => {
-      return despesa.destroy();
-    })
-    .then(() => res.redirect('/despesas'))
-    .catch(error => next(error));
+  try {
+    const despesa = await query.get(req.params.id);
+    await despesa.destroy();
+    res.redirect('/despesas');
+  } catch (err) {
+    res.status(500).render('error', { message: 'Erro ao excluir despesa', error: err });
+  }
 });
 
 // Rota para exibir o formulário de edição de despesas
@@ -115,27 +145,22 @@ router.get('/:id/edit', async function(req, res, next) {
 });
 
 // Rota para processar o formulário de edição de despesas
-router.post('/:id/edit', async function(req, res, next) {
-  const despesaId = req.params.id;
-  const { data, descricao, quantidade, vl_unitario, categoriaId } = req.body;
-  const categoria = new Parse.Object('Categoria');
-  categoria.id = categoriaId;
-
+router.post('/:id/edit', async (req, res) => {
+  const { data, descricao, quantidade, vl_unitario, categoria } = req.body;
+  const Despesa = Parse.Object.extend('Despesa');
   const query = new Parse.Query(Despesa);
-
   try {
-    const despesa = await query.get(despesaId);
+    const despesa = await query.get(req.params.id);
     despesa.set('data', new Date(data));
     despesa.set('descricao', descricao);
-    despesa.set('quantidade', parseInt(quantidade));
+    despesa.set('quantidade', parseFloat(quantidade));
     despesa.set('vl_unitario', parseFloat(vl_unitario));
-    despesa.set('vl_total', quantidade * vl_unitario);
+    despesa.set('vl_total', parseFloat(quantidade) * parseFloat(vl_unitario));
     despesa.set('categoria', categoria);
-
     await despesa.save();
-    res.redirect('/despesas/edit');
-  } catch (error) {
-    next(error);
+    res.redirect('/despesas');
+  } catch (err) {
+    res.status(500).render('error', { message: 'Erro ao editar despesa', error: err });
   }
 });
 

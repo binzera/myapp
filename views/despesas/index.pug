@@ -3,7 +3,13 @@ extends ../layout
 block content
   .container
     h1 Lista de Despesas
-    a.btn.btn-primary(href="/despesas/add") Adicionar Nova Despesa
+    form#anoForm(method="GET" action="/despesas")
+      .form-group
+        label(for="ano") Filtrar por Ano
+        select#ano.form-control(name="ano" onchange="document.getElementById('anoForm').submit()")
+          option(value="0") Todos os anos
+          each ano in anos
+            option(value=ano selected=(ano.toString() === anoSelecionado)) #{ano}
     table
       thead
         tr
@@ -19,7 +25,7 @@ block content
           tr
             td= new Date(despesa.get('data')).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
             td= despesa.get('descricao')
-            td= despesa.get('categoria') ? despesa.get('categoria').get('descricao') : 'N/A'
+            td= despesa.get('categoriaNome')
             td.text-center= despesa.get('quantidade') || 'N/A'
             td.text-center= despesa.get('vl_unitario') ? despesa.get('vl_unitario').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
             td.text-center= (despesa.get('quantidade') && despesa.get('vl_unitario')) ? (despesa.get('quantidade') * despesa.get('vl_unitario')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
@@ -32,4 +38,6 @@ block content
           td(colspan="5") Total de despesas
           td.text-center= despesas.reduce((sum, despesa) => sum + (despesa.get('quantidade') && despesa.get('vl_unitario') ? despesa.get('quantidade') * despesa.get('vl_unitario') : 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
           td
-    a.btn.btn-secondary(href="/") Voltar
+    .d-flex.justify-content-between.mt-3
+      a.btn.btn-secondary(href="/") Voltar
+      a.btn.btn-primary(style="margin-top: 10px; float:right;", href="/despesas/add") Adicionar
