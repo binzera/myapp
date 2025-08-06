@@ -37,39 +37,39 @@ router.get('/json', async (req, res) => {
     }
 });
 
-// Rota para renderizar a view com a lista de comércios de animais
+// Rota para listar todos os comércios de animais
 router.get('/', async (req, res) => {
-    const Pessoa = Parse.Object.extend('Pessoa');
-    const query = new Parse.Query(ComercioAnimais);
-    try {
-        const comercioAnimais = await query.find();
-        const pessoasQuery = new Parse.Query(Pessoa);
-        const pessoas = await pessoasQuery.find();
-        const pessoasMap = {};
-        pessoas.forEach(pessoa => {
-            pessoasMap[pessoa.id] = pessoa.get('nome');
-        });
-        comercioAnimais.forEach(comercioAnimal => {
-            comercioAnimal.set('vendedorNome', pessoasMap[comercioAnimal.get('vendedor')]);
-            comercioAnimal.set('compradorNome', pessoasMap[comercioAnimal.get('comprador')]);
-        });
-        console.log(comercioAnimais);
-        res.render('comercioAnimais', { comercioAnimais });
-    } catch (err) {
-        res.status(500).send(err);
-    }
+  const Pessoa = Parse.Object.extend('Pessoa');
+  const query = new Parse.Query(ComercioAnimais);
+  try {
+    const comercioAnimais = await query.find();
+    const pessoasQuery = new Parse.Query(Pessoa);
+    const pessoas = await pessoasQuery.find();
+    const pessoasMap = {};
+    pessoas.forEach(pessoa => {
+      pessoasMap[pessoa.id] = pessoa.get('nome');
+    });
+    comercioAnimais.forEach(comercioAnimal => {
+      comercioAnimal.set('vendedorNome', pessoasMap[comercioAnimal.get('vendedor')]);
+      comercioAnimal.set('compradorNome', pessoasMap[comercioAnimal.get('comprador')]);
+    });
+    console.log(comercioAnimais);
+    res.render('comercioAnimais/index', { comercioAnimais });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 // Rota para exibir o formulário de inserção de comércios de animais
 router.get('/add', async function(req, res, next) {
-    const Pessoa = Parse.Object.extend('Pessoa');
-    const query = new Parse.Query(Pessoa);
-    try {
-        const pessoas = await query.find();
-        res.render('addComercioAnimais', { pessoas });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+  const Pessoa = Parse.Object.extend('Pessoa');
+  const query = new Parse.Query(Pessoa);
+  try {
+    const pessoas = await query.find();
+    res.render('comercioAnimais/add', { pessoas });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 // Rota para processar o formulário de inserção de comércios de animais
@@ -114,7 +114,7 @@ router.get('/:id/edit', function(req, res, next) {
 
   query.get(comercioAnimaisId)
     .then(comercioAnimais => {
-      res.render('editComercioAnimais', { comercioAnimais });
+      res.render('comercioAnimais/edit', { comercioAnimais });
     })
     .catch(error => next(error));
 });

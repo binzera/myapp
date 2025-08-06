@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
 
 // Rota para exibir o formulário de inserção de categorias
 router.get('/add', function(req, res, next) {
-  res.render('addCategoria');
+  res.render('categorias/add');
 });
 
 // Rota para processar o formulário de inserção de categorias
@@ -80,7 +80,7 @@ router.get('/:id/edit', function(req, res, next) {
 
   query.get(categoriaId)
     .then(categoria => {
-      res.render('editCategoria', { categoria });
+      res.render('categorias/edit', { categoria });
     })
     .catch(error => next(error));
 });

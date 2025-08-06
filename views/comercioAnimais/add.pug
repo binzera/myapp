@@ -1,0 +1,77 @@
+extends ../layout
+
+block content
+  .container
+    h1 Adicionar Comércio de Animais
+    form(action="/comercio_animais/add" method="POST")
+      .form-group
+        label(for="data") Data
+        input#data.form-control(type="date" name="data" value=(new Date()).toISOString().split('T')[0] required)
+      .form-group
+        label(for="tipo") Tipo de transação
+        select.form-control(name="tipo" id="tipo" required)
+          option(value="") Selecione o Tipo
+          option(value="Compra") Compra
+          option(value="Venda") Venda
+      .form-group
+        label(for="sexo") Sexo
+        select.form-control(name="sexo" required)
+          option(value="") Selecione o Tipo
+          option(value="Macho") Macho
+          option(value="Fêmea") Fêmea
+      .form-group
+        label(for="vendedor") Vendedor
+        select#vendedor.form-control(name="vendedor" required)
+          option(value="") Selecione o Vendedor
+          each pessoa in pessoas
+              option(value=pessoa.id data-tipo=pessoa.get('tipo'))= pessoa.get('nome')
+      .form-group
+        label(for="comprador") Comprador
+        select#comprador.form-control(name="comprador" required)
+          option(value="") Selecione o comprador
+          each pessoa in pessoas
+              option(value=pessoa.id data-tipo=pessoa.get('tipo'))= pessoa.get('nome')
+      .form-group
+        label(for="quantidade") Quantidade
+        input#quantidade.form-control(type="number" name="quantidade" required)
+      .form-group
+        label(for="valor") Valor
+        input#valor.form-control(type="number" step="0.01" name="valor" required)
+      .form-group
+        label(for="peso") Peso
+        input#peso.form-control(type="number" step="0.01" name="peso" required)
+      .form-group
+        label(for="idade") Idade
+        select.form-control(name="idade" required)
+          option(value="") Selecione a Idade
+          option(value="0-12") 0-12 meses
+          option(value="13-24") 13-24 meses
+          option(value="25-36") 25-36 meses
+          option(value="+36") Acima de 36 meses
+      .form-group
+        button.btn.btn-secondary(type="button" onclick="window.location.href='/comercio_animais'" style="display:inline; margin-right: 5px;") Voltar
+        button.btn.btn-primary(type="submit") Adicionar
+
+    // Script para filtrar o dropdown vendedor
+    script.
+      document.getElementById('tipo').addEventListener('change', function() {
+        var tipo = this.value;
+        var vendedorDropdown = document.getElementById('vendedor');
+        for (var i = 0; i < vendedorDropdown.options.length; i++) {
+          var option = vendedorDropdown.options[i];
+          if (tipo === 'Venda' && option.getAttribute('data-tipo') !== 'Sócio') {
+            option.style.display = 'none';
+          } else {
+            option.style.display = 'block';
+          }
+        }
+        var compradorDropdown = document.getElementById('comprador');
+        for (var i = 0; i < compradorDropdown.options.length; i++) {
+          var option = compradorDropdown.options[i];
+          if (tipo === 'Compra' && option.getAttribute('data-tipo') !== 'Sócio') {
+            option.style.display = 'none';
+          } else {
+            option.style.display = 'block';
+          }
+        }
+      });

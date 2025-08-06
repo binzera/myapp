@@ -55,7 +55,7 @@ router.get('/add', async function(req, res, next) {
     const query = new Parse.Query(Categoria);
     try {
         const categorias = await query.find();
-        res.render('addDespesa', { categorias });
+        res.render('despesas/add', { categorias });
     } catch (error) {
         next(error);
     }
@@ -108,7 +108,7 @@ router.get('/:id/edit', async function(req, res, next) {
   try {
     const despesa = await queryDespesa.get(despesaId);
     const categorias = await queryCategoria.find();
-    res.render('editDespesa', { despesa, categorias });
+    res.render('despesas/edit', { despesa, categorias });
   } catch (error) {
     next(error);
   }
@@ -133,7 +133,7 @@ router.post('/:id/edit', async function(req, res, next) {
     despesa.set('categoria', categoria);
 
     await despesa.save();
-    res.redirect('/despesas');
+    res.redirect('/despesas/edit');
   } catch (error) {
     next(error);
   }
