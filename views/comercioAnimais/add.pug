@@ -6,7 +6,7 @@ block content
     form(action="/comercio_animais/add" method="POST")
       .form-group
         label(for="data") Data
-        input#data.form-control(type="date" name="data" value=(new Date()).toISOString().split('T')[0] required)
+        input#data.form-control(type="date" name="data" value=(new Date()).toISOString().split('T')[0] required style="width: 98%;")
       .form-group
         label(for="tipo") Tipo de transação
         select.form-control(name="tipo" id="tipo" required)
@@ -21,25 +21,31 @@ block content
           option(value="Fêmea") Fêmea
       .form-group
         label(for="vendedor") Vendedor
-        select#vendedor.form-control(name="vendedor" required)
-          option(value="") Selecione o Vendedor
-          each pessoa in pessoas
-              option(value=pessoa.id data-tipo=pessoa.get('tipo'))= pessoa.get('nome')
+        .d-flex.align-items-center
+          select#vendedor.form-control(name="vendedor" required style="flex:1; width: 94%;")
+            option(value="") Selecione o Vendedor
+            each pessoa in pessoas
+                option(value=pessoa.id data-tipo=pessoa.get('tipo'))= pessoa.get('nome')
+          a.btn.btn-sm.btn-success(href="/pessoas/add" title="Cadastrar novo vendedor" style="margin-bottom: 0px;")
+            i(class="fa fa-user-plus" aria-hidden="true")
       .form-group
         label(for="comprador") Comprador
-        select#comprador.form-control(name="comprador" required)
-          option(value="") Selecione o comprador
-          each pessoa in pessoas
-              option(value=pessoa.id data-tipo=pessoa.get('tipo'))= pessoa.get('nome')
+        .d-flex.align-items-center
+          select#comprador.form-control(name="comprador" required style="flex:1; width: 94%;")
+            option(value="") Selecione o comprador
+            each pessoa in pessoas
+                option(value=pessoa.id data-tipo=pessoa.get('tipo'))= pessoa.get('nome')
+          a.btn.btn-sm.btn-success(href="/pessoas/add" title="Cadastrar novo comprador" style="margin-bottom: 0px;")
+            i(class="fa fa-user-plus" aria-hidden="true")
       .form-group
         label(for="quantidade") Quantidade
-        input#quantidade.form-control(type="number" name="quantidade" required)
+        input#quantidade.form-control(type="number" name="quantidade" required style="width: 98%;")
       .form-group
         label(for="valor") Valor
-        input#valor.form-control(type="number" step="0.01" name="valor" required)
+        input#valor.form-control(type="number" step="0.01" name="valor" required style="width: 98%;")
       .form-group
         label(for="peso") Peso
-        input#peso.form-control(type="number" step="0.01" name="peso" required)
+        input#peso.form-control(type="number" step="0.01" name="peso" required style="width: 98%;")
       .form-group
         label(for="idade") Idade
         select.form-control(name="idade" required)
