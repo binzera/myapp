@@ -55,7 +55,11 @@ console.log('Ano selecionado:', anoSelecionado);
     const queryAnos = new Parse.Query(Despesa);
     queryAnos.ascending('data');
     let anoInicial = await queryAnos.first();
-    anoInicial = anoInicial.get('data').getFullYear();
+    if(!anoInicial) {
+      anoInicial = new Date().getFullYear().toString();
+    } else {
+      anoInicial = anoInicial.get('data').getFullYear();
+    }
     const anoAtual = new Date().getFullYear();
     for (let ano = anoInicial; ano <= anoAtual; ano++) {
       anos.push(ano);

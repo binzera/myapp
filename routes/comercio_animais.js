@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Parse = require('parse/node');
+const Pessoa = require('../models/pessoa');
 const ComercioAnimais = require('../models/comercio_animais');
-const Socio = require('../models/socio');
 
 // Rota para criar um novo comércio de animais
 router.post('/', async (req, res) => {
@@ -39,9 +39,38 @@ router.get('/json', async (req, res) => {
 
 // Rota para listar todos os comércios de animais
 router.get('/', async (req, res) => {
-  const Pessoa = Parse.Object.extend('Pessoa');
-  const query = new Parse.Query(ComercioAnimais);
+  const ComercioAnimal = Parse.Object.extend('ComercioAnimais');
+  const anos = [];
+  let anoSelecionado = req.query.ano;
+
+  if (anoSelecionado == 0) {
+    anoSelecionado = null;
+  } else if (!anoSelecionado) {
+    anoSelecionado = new Date().getFullYear().toString();
+  }
+
   try {
+    const queryAnos = new Parse.Query(ComercioAnimal);
+    queryAnos.ascending('data');
+    let anoInicial = await queryAnos.first();
+    if(!anoInicial) {
+      anoInicial = new Date().getFullYear().toString();
+    } else {
+      anoInicial = anoInicial.get('data').getFullYear();
+    }
+    const anoAtual = new Date().getFullYear();
+    for (let ano = anoInicial; ano <= anoAtual; ano++) {
+      anos.push(ano);
+    }
+
+    const query = new Parse.Query(ComercioAnimal);
+    if (anoSelecionado) {
+      const startDate = new Date(`${anoSelecionado}-01-01T00:00:00.000Z`);
+      const endDate = new Date(`${anoSelecionado}-12-31T23:59:59.999Z`);
+      query.greaterThanOrEqualTo('data', startDate);
+      query.lessThanOrEqualTo('data', endDate);
+    }
+
     const comercioAnimais = await query.find();
     const pessoasQuery = new Parse.Query(Pessoa);
     const pessoas = await pessoasQuery.find();
@@ -53,10 +82,9 @@ router.get('/', async (req, res) => {
       comercioAnimal.set('vendedorNome', pessoasMap[comercioAnimal.get('vendedor')]);
       comercioAnimal.set('compradorNome', pessoasMap[comercioAnimal.get('comprador')]);
     });
-    console.log(comercioAnimais);
-    res.render('comercioAnimais/index', { comercioAnimais });
+    res.render('comercioAnimais/index', { comercioAnimais, anoSelecionado, anos });
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).render('error', { message: 'Erro ao listar negócios', error: err });
   }
 });
 

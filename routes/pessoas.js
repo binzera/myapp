@@ -1,77 +1,73 @@
 const express = require('express');
 const router = express.Router();
 const Parse = require('parse/node');
+const Pessoa = require('../models/pessoa');
 
 // Listar todas as pessoas
 router.get('/', async (req, res) => {
-  const Pessoa = Parse.Object.extend('Pessoa');
   const query = new Parse.Query(Pessoa);
   try {
     const pessoas = await query.find();
     res.render('pessoas/index', { pessoas });
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).render('error', { message: 'Erro ao listar pessoas', error: err });
   }
 });
 
-// Formulário para adicionar uma nova pessoa
+// Exibir formulário de cadastro
 router.get('/add', (req, res) => {
   res.render('pessoas/add');
 });
 
-// Adicionar uma nova pessoa
+// Cadastrar nova pessoa
 router.post('/add', async (req, res) => {
-  const { nome, tipo } = req.body;
-  const Pessoa = Parse.Object.extend('Pessoa');
+  const { tipo, nome } = req.body;
   const pessoa = new Pessoa();
-  pessoa.set('nome', nome);
   pessoa.set('tipo', tipo);
+  pessoa.set('nome', nome);
   try {
     await pessoa.save();
     res.redirect('/pessoas');
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).render('error', { message: 'Erro ao cadastrar pessoa', error: err });
   }
 });
 
-// Formulário para editar uma pessoa
+// Exibir formulário de edição
 router.get('/:id/edit', async (req, res) => {
-  const Pessoa = Parse.Object.extend('Pessoa');
   const query = new Parse.Query(Pessoa);
   try {
     const pessoa = await query.get(req.params.id);
     res.render('pessoas/edit', { pessoa });
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).render('error', { message: 'Erro ao buscar pessoa', error: err });
   }
 });
 
-// Editar uma pessoa
+// Editar pessoa
 router.post('/:id/edit', async (req, res) => {
-  const { nome, tipo } = req.body;
-  const Pessoa = Parse.Object.extend('Pessoa');
+  const { tipo, nome } = req.body;
   const query = new Parse.Query(Pessoa);
   try {
     const pessoa = await query.get(req.params.id);
-    pessoa.set('nome', nome);
     pessoa.set('tipo', tipo);
+    pessoa.set('nome', nome);
     await pessoa.save();
     res.redirect('/pessoas');
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).render('error', { message: 'Erro ao editar pessoa', error: err });
   }
 });
 
-// Excluir uma pessoa
+// Excluir pessoa
 router.post('/:id/delete', async (req, res) => {
-  const Pessoa = Parse.Object.extend('Pessoa');
   const query = new Parse.Query(Pessoa);
   try {
     const pessoa = await query.get(req.params.id);
     await pessoa.destroy();
     res.redirect('/pessoas');
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).render('error', { message: 'Erro ao excluir pessoa', error: err });
   }
 });
 

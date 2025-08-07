@@ -2,8 +2,14 @@ extends ../layout
 
 block content
   .container
-    h1 Lista de Comércio de Animais
-    a.btn.btn-primary(href="/comercio_animais/add") Adicionar Novo Comércio de Animais
+    h1 Lista de negócios realizados
+    form#anoForm(method="GET" action="/comercio_animais")
+      .form-group
+        label(for="ano") Filtrar por Ano
+        select#ano.form-control(name="ano" onchange="document.getElementById('anoForm').submit()")          
+          option(value="0") Todos os anos
+          each ano in anos
+            option(value=ano selected=(ano.toString() === anoSelecionado)) #{ano}
     table
       thead
         tr
@@ -13,7 +19,7 @@ block content
           th Vendedor
           th Comprador
           th Quantidade
-          th Valor
+          th Valor Unitário
           th Valor Total
           th Peso (@)
           th Idade
@@ -24,9 +30,9 @@ block content
             td= new Date(comercioAnimal.get('data')).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
             td= comercioAnimal.get('tipo')
             td= comercioAnimal.get('sexo')
-            td= comercioAnimal.get('vendedorNome')
-            td= comercioAnimal.get('compradorNome')
-            td= comercioAnimal.get('quantidade')
+            td.text-center= comercioAnimal.get('vendedorNome')
+            td.text-center= comercioAnimal.get('compradorNome')
+            td.text-center= comercioAnimal.get('quantidade')
             td= comercioAnimal.get('valor').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
             td.text-center= (comercioAnimal.get('quantidade') && comercioAnimal.get('valor')) ? (comercioAnimal.get('quantidade') * comercioAnimal.get('valor')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
             td= comercioAnimal.get('peso')
@@ -36,4 +42,9 @@ block content
                 button.btn.btn-warning(type="submit") Editar
               form(action=`/comercio_animais/${comercioAnimal.id}/delete` method="POST" style="display:inline;")
                 button.btn.btn-danger(type="submit") Excluir
+        tr
+          td(colspan="6")
+          td.text-right.text-bold Total
+          td.text-center= comercioAnimais.reduce((sum, comercioAnimal) => sum + ((comercioAnimal.get('quantidade') && comercioAnimal.get('valor')) ? comercioAnimal.get('quantidade') * comercioAnimal.get('valor') : 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
     a.btn.btn-secondary(href="/") Voltar
+    a.btn.btn-primary(style="margin-top: 10px; margin-left: 5px;", href="/comercio_animais/add") Adicionar
