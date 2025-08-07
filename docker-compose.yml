@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PARSE_APP_ID=${PARSE_APP_ID}
+      - PARSE_JS_KEY=${PARSE_JS_KEY}
+      - PARSE_SERVER_URL=${PARSE_SERVER_URL}
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/app
