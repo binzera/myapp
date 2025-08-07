@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
     const { data, descricao, quantidade, vl_unitario, categoriaId } = req.body;
     const categoria = new Parse.Object('Categoria');
     categoria.id = categoriaId;
-
+    console.log(categoria);
     const newDespesa = new Despesa();
     newDespesa.set('data', new Date(data));
     newDespesa.set('descricao', descricao);
@@ -73,6 +73,7 @@ console.log('Ano selecionado:', anoSelecionado);
       query.greaterThanOrEqualTo('data', startDate);
       query.lessThanOrEqualTo('data', endDate);
     }
+    query.include('categoria');
     const despesas = await query.find();
     const categoriasQuery = new Parse.Query(Categoria);
     const categorias = await categoriasQuery.find();
@@ -80,8 +81,12 @@ console.log('Ano selecionado:', anoSelecionado);
     categorias.forEach(categoria => {
       categoriasMap[categoria.id] = categoria.get('descricao');
     });
+    
     despesas.forEach(despesa => {
-      despesa.set('categoriaNome', categoriasMap[despesa.get('categoria')]);
+      const categoriaObj = despesa.get('categoria');
+      if (categoriaObj) {
+        despesa.set('categoriaNome', categoriasMap[categoriaObj.id]);
+      }
     });
     res.render('despesas/index', { despesas, anoSelecionado, anos });
   } catch (err) {
@@ -102,8 +107,11 @@ router.get('/add', async function(req, res, next) {
 
 // Rota para processar o formulário de inserção de despesas
 router.post('/add', async (req, res) => {
-  const { data, descricao, quantidade, vl_unitario, categoria } = req.body;
-  const Despesa = Parse.Object.extend('Despesa');
+  const { data, descricao, quantidade, vl_unitario, categoriaId } = req.body;
+
+  const categoria = new Categoria();
+  categoria.id = categoriaId;
+
   const despesa = new Despesa();
   despesa.set('data', new Date(data));
   despesa.set('descricao', descricao);
@@ -150,9 +158,11 @@ router.get('/:id/edit', async function(req, res, next) {
 
 // Rota para processar o formulário de edição de despesas
 router.post('/:id/edit', async (req, res) => {
-  const { data, descricao, quantidade, vl_unitario, categoria } = req.body;
+  const { data, descricao, quantidade, vl_unitario, categoriaId } = req.body;
   const Despesa = Parse.Object.extend('Despesa');
   const query = new Parse.Query(Despesa);
+  const categoria = new Categoria();
+  categoria.id = categoriaId;
   try {
     const despesa = await query.get(req.params.id);
     despesa.set('data', new Date(data));
