@@ -23,21 +23,71 @@ block content
       tbody
         each despesa in despesas
           tr
+            
             td= despesa.get('dataFormatada')
             td= despesa.get('descricao')
             td= despesa.get('categoriaNome')
             td.text-center= despesa.get('quantidade') || 'N/A'
             td.text-center= despesa.get('vl_unitario') ? despesa.get('vl_unitario').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
-            td.text-center= despesa.get('vl_total') ? despesa.get('vl_total').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
+            td.text-center= despesa.get('vl_total') ? despesa.get('vl_total').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'              
             td.text-center
-              form(action=`/despesas/${despesa.id}/edit` method="GET" style="display:inline; margin-right: 5px;")
-                button.btn.btn-warning(type="submit") Editar
+              form(action=`/despesas/${despesa.id}/edit` method="GET" style="display:inline;")
+                button.btn.btn-warning(type="submit" title="Editar despesa") <i class="fa fa-pencil-square" aria-hidden="true"></i>
               form(action=`/despesas/${despesa.id}/delete` method="POST" style="display:inline;")
-                button.btn.btn-danger(type="submit") Excluir
+                button.btn.btn-danger(type="submit" title="Excluir despesa") <i class="fa fa-trash" aria-hidden="true"></i>
         tr
-          td(colspan="5") Total de despesas
+          td(colspan="5") Total de despesas na página
           td.text-center= despesas.reduce((sum, despesa) => sum + (despesa.get('vl_total') ? despesa.get('vl_total') : 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
           td
-    .d-flex.justify-content-between.mt-3
-      a.btn.btn-secondary(href="/") Voltar
-      a.btn.btn-primary(style="margin-top: 10px; float:right;", href="/despesas/add") Adicionar
+    div
+      if totalPages > 1
+        nav(aria-label="Paginação de despesas" style="display: flex; justify-content: flex-end;")
+          ul.pagination.mt-3
+            // Botão Primeira página
+            if page > 1
+              li.page-item
+                a.page-link(href=`/despesas?ano=${anoSelecionado}&page=1`) Primeira
+            else
+              li.page-item.disabled
+                span.page-link Primeira
+            // Botão Anterior
+            if page > 1
+              li.page-item
+                a.page-link(href=`/despesas?ano=${anoSelecionado}&page=${page-1}`) «
+            else
+              li.page-item.disabled
+                span.page-link «
+            // Números de página (máximo 5 ao redor da atual)
+            - const start = Math.max(1, page - 2)
+            - const end = Math.min(totalPages, page + 2)
+            if start > 1
+              li.page-item.disabled
+                span.page-link ...
+            each p in Array(end - start + 1).fill().map((_, i) => start + i)
+              if p === page
+                li.page-item.active
+                  span.page-link= p
+              else
+                li.page-item
+                  a.page-link(href=`/despesas?ano=${anoSelecionado}&page=${p}`)= p
+            if end < totalPages
+              li.page-item.disabled
+                span.page-link ...
+            // Botão Próxima
+            if page < totalPages
+              li.page-item
+                a.page-link(href=`/despesas?ano=${anoSelecionado}&page=${page+1}`) »
+            else
+              li.page-item.disabled
+                span.page-link »
+            // Botão Última página
+            if page < totalPages
+              li.page-item
+                a.page-link(href=`/despesas?ano=${anoSelecionado}&page=${totalPages}`) Última
+            else
+              li.page-item.disabled
+                span.page-link Última
+    div 
+      .d-flex.justify-content-between.mt-3
+        a.btn.btn-secondary(href="/") Voltar
+        a.btn.btn-primary(style="margin-top: 10px;", href="/despesas/add") Adicionar
