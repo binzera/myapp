@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
     const { data, descricao, quantidade, vl_unitario, categoriaId } = req.body;
     const categoria = new Parse.Object('Categoria');
     categoria.id = categoriaId;
-    console.log(categoria);
+
     const newDespesa = new Despesa();
     newDespesa.set('data', new Date(data));
     newDespesa.set('descricao', descricao);
@@ -44,7 +44,6 @@ router.get('/', async (req, res) => {
   const Categoria = Parse.Object.extend('Categoria');
   const anos = [];
   let anoSelecionado = req.query.ano;
-console.log('Ano selecionado:', anoSelecionado);
   if (anoSelecionado == 0) {
     anoSelecionado = null;
   } else if (!anoSelecionado) {
@@ -74,7 +73,9 @@ console.log('Ano selecionado:', anoSelecionado);
       query.lessThanOrEqualTo('data', endDate);
     }
     query.include('categoria');
+    query.limit(1000); // Limita o número de resultados para evitar problemas de performance
     const despesas = await query.find();
+    console.log('Total de despesas: ' + despesas.length);
     const categoriasQuery = new Parse.Query(Categoria);
     const categorias = await categoriasQuery.find();
     const categoriasMap = {};
@@ -82,12 +83,22 @@ console.log('Ano selecionado:', anoSelecionado);
       categoriasMap[categoria.id] = categoria.get('descricao');
     });
     
+    // Ordena despesas pela data (mais recente primeiro)
+    despesas.sort((a, b) => new Date(b.get('data')) - new Date(a.get('data')));
+
     despesas.forEach(despesa => {
+      let dataString = despesa.get('data');
+      dataString = dataString.toISOString().replace('T', ' ').replace('Z', '');
+      const dataOriginal = new Date(dataString);
+      console.log(despesa.get('vl_total') ? despesa.get('vl_total') : 'N/A');
+      despesa.set('dataFormatada', dataOriginal.toLocaleDateString('pt-BR'));
+      
       const categoriaObj = despesa.get('categoria');
       if (categoriaObj) {
         despesa.set('categoriaNome', categoriasMap[categoriaObj.id]);
       }
     });
+    
     res.render('despesas/index', { despesas, anoSelecionado, anos });
   } catch (err) {
     res.status(500).render('error', { message: 'Erro ao listar despesas', error: err });
