@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+  .container
+    h1 Relatório: Valor Total das Despesas por Categoria
+    if anoSelecionado
+      h4 Ano: #{anoSelecionado}
+    table.table.table-striped
+      thead
+        tr
+          th.text-center Categoria
+          th.text-center Valor Total (R$)
+      tbody
+        each valor, categoria in relatorio
+          tr
+            td= categoria
+            td.text-center= valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+        tr
+          td.text-center Total de despesas
+          td.text-center= Object.values(relatorio).reduce((sum, valor) => sum + valor, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    a.btn.btn-secondary(href="/") Voltar

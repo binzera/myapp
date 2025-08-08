@@ -74,7 +74,17 @@ router.get('/', async (req, res) => {
     }
     query.include('categoria');
     
+    // Paginação no backend
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 20;
+    query.skip((page - 1) * perPage);
+    query.limit(perPage);
+    
     const despesas = await query.find();
+    // Buscar o total de registros para calcular totalPages
+    const count = await query.count();
+    const totalPages = Math.ceil(count / perPage);
+    
     const categoriasQuery = new Parse.Query(Categoria);
     const categorias = await categoriasQuery.find();
     const categoriasMap = {};
@@ -97,20 +107,13 @@ router.get('/', async (req, res) => {
       }
     });
     
-    // Paginação
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 20;
-    const totalDespesas = despesas.length;
-    const totalPages = Math.ceil(totalDespesas / perPage);
-    const despesasPaginadas = despesas.slice((page - 1) * perPage, page * perPage);
-
     res.render('despesas/index', {
-      despesas: despesasPaginadas,
+      despesas,
       anoSelecionado,
       anos,
       page,
       totalPages,
-      totalDespesas
+      totalDespesas: count
     });
   } catch (err) {
     res.status(500).render('error', { message: 'Erro ao listar despesas', error: err });
