@@ -42,6 +42,9 @@ router.get('/', async (req, res) => {
   const ComercioAnimal = Parse.Object.extend('ComercioAnimais');
   const anos = [];
   let anoSelecionado = req.query.ano;
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10;
+  const skip = (page - 1) * limit;
 
   if (anoSelecionado == 0) {
     anoSelecionado = null;
@@ -70,6 +73,20 @@ router.get('/', async (req, res) => {
       query.greaterThanOrEqualTo('data', startDate);
       query.lessThanOrEqualTo('data', endDate);
     }
+    query.descending('data');
+    query.skip(skip);
+    query.limit(limit);
+
+    // Para contar o total de registros
+    const countQuery = new Parse.Query(ComercioAnimal);
+    if (anoSelecionado) {
+      const startDate = new Date(`${anoSelecionado}-01-01T00:00:00.000Z`);
+      const endDate = new Date(`${anoSelecionado}-12-31T23:59:59.999Z`);
+      countQuery.greaterThanOrEqualTo('data', startDate);
+      countQuery.lessThanOrEqualTo('data', endDate);
+    }
+    const totalCount = await countQuery.count();
+    const totalPages = Math.ceil(totalCount / limit);
 
     const comercioAnimais = await query.find();
     const pessoasQuery = new Parse.Query(Pessoa);
@@ -82,7 +99,13 @@ router.get('/', async (req, res) => {
       comercioAnimal.set('vendedorNome', pessoasMap[comercioAnimal.get('vendedor')]);
       comercioAnimal.set('compradorNome', pessoasMap[comercioAnimal.get('comprador')]);
     });
-    res.render('comercioAnimais/index', { comercioAnimais, anoSelecionado, anos });
+    res.render('comercio_animais/index', {
+      comercioAnimais,
+      anoSelecionado,
+      anos,
+      page,
+      totalPages
+    });
   } catch (err) {
     res.status(500).render('error', { message: 'Erro ao listar negócios', error: err });
   }

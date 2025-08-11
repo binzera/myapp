@@ -1,10 +1,17 @@
 extends ../layout
 
 block content
-  .container
-    h1 Relatório: Valor Total das Despesas por Categoria
-    if anoSelecionado
-      h4 Ano: #{anoSelecionado}
+  .container.mt-5
+    h1.text-center.mb-3 Valor Total das Despesas por Categoria
+    form#anoForm(method="GET" action="/relatorios/despesas-por-categoria" class="mb-4")
+      .input-group.input-group-sm
+        span.input-group-text.bg-light.text-dark(style="min-width: 100px;") Ano
+        select#ano.form-select(name="ano" onchange="document.getElementById('anoForm').submit()")
+          option(value="0" selected=anoSelecionado === '0') Todos os anos
+          each ano in anos
+            option(value=ano selected=(ano.toString() === anoSelecionado)) #{ano}
+    if anoSelecionado && anoSelecionado !== '0'
+      h4.mb-3 Ano: #{anoSelecionado}
     table.table.table-striped
       thead
         tr
@@ -13,9 +20,9 @@ block content
       tbody
         each valor, categoria in relatorio
           tr
-            td= categoria
+            td.text-center= categoria
             td.text-center= valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
         tr
-          td.text-center Total de despesas
-          td.text-center= Object.values(relatorio).reduce((sum, valor) => sum + valor, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+          td.text-center.text-bold Total de despesas
+          td.text-center.text-bold= Object.values(relatorio).reduce((sum, valor) => sum + valor, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
     a.btn.btn-secondary(href="/") Voltar

@@ -2,11 +2,11 @@ extends ../layout
 
 block content
   .container.mt-5
-    h1 Lista de Despesas
-    form#anoForm(method="GET" action="/despesas")
-      .form-group
-        label(for="ano") Filtrar por Ano
-        select#ano.form-control(name="ano" onchange="document.getElementById('anoForm').submit()")
+    h1.mb-3 Lista de Despesas
+    form#anoForm(method="GET" action="/despesas" class="mb-2")
+      .input-group.input-group-sm
+        span.input-group-text.bg-light.text-dark(style="min-width: 100px;") Ano
+        select#ano.form-select(name="ano" onchange="document.getElementById('anoForm').submit()")
           option(value="0") Todos os anos
           each ano in anos
             option(value=ano selected=(ano.toString() === anoSelecionado)) #{ano}
@@ -90,5 +90,5 @@ block content
                 span.page-link Última
     div 
       .d-flex.justify-content-between.mt-3
-        a.btn.btn-secondary(href="/") Voltar
+        a.btn.btn-secondary(href="/", style="margin-right: 5px;") Voltar
         a.btn.btn-primary(href="/despesas/add") Adicionar

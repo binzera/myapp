@@ -2,14 +2,15 @@ extends ../layout
 
 block content
   .container.mt-5
-    h1 Lista de negócios realizados
-    form#anoForm(method="GET" action="/comercio_animais")
-      .form-group
-        label(for="ano") Filtrar por Ano
-        select#ano.form-control(name="ano" onchange="document.getElementById('anoForm').submit()")          
+    h1.mb-3 Comércio de animais
+    form#anoForm(method="GET" action="/comercio_animais" class="mb-2")
+      .input-group.input-group-sm
+        span.input-group-text.bg-light.text-dark(style="min-width: 100px;") Ano
+        select#ano.form-select(name="ano" onchange="document.getElementById('anoForm').submit()")
           option(value="0") Todos os anos
           each ano in anos
             option(value=ano selected=(ano.toString() === anoSelecionado)) #{ano}
+    // tabela de animais
     table.table.table-striped.table-hover
       thead
         tr
@@ -47,5 +48,27 @@ block content
           td(colspan="6")
           td.text-right.text-bold Total
           td.text-center= comercioAnimais.reduce((sum, comercioAnimal) => sum + ((comercioAnimal.get('quantidade') && comercioAnimal.get('valor')) ? comercioAnimal.get('quantidade') * comercioAnimal.get('valor') : 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-    a.btn.btn-secondary(href="/") Voltar
+    // controles de paginação
+    nav.mt-4
+      ul.pagination.justify-content-center
+        if page > 1
+          li.page-item
+            a.page-link(href=`/comercio_animais?page=${page - 1}`) « Anterior
+        else
+          li.page-item.disabled
+            span.page-link « Anterior
+        each num in Array(totalPages).fill().map((_, i) => i + 1)
+          if num === page
+            li.page-item.active
+              span.page-link= num
+          else
+            li.page-item
+              a.page-link(href=`/comercio_animais?page=${num}`)= num
+        if page < totalPages
+          li.page-item
+            a.page-link(href=`/comercio_animais?page=${page + 1}`) Próxima »
+        else
+          li.page-item.disabled
+            span.page-link Próxima »
+    a.btn.btn-secondary(href="/", style="margin-right: 5px;") Voltar
     a.btn.btn-primary(href="/comercio_animais/add") Adicionar
