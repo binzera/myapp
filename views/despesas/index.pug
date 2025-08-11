@@ -1,7 +1,7 @@
 extends ../layout
 
 block content
-  .container
+  .container.mt-5
     h1 Lista de Despesas
     form#anoForm(method="GET" action="/despesas")
       .form-group
@@ -10,7 +10,7 @@ block content
           option(value="0") Todos os anos
           each ano in anos
             option(value=ano selected=(ano.toString() === anoSelecionado)) #{ano}
-    table
+    table.table.table-striped.table-hover
       thead
         tr
           th Data
@@ -31,10 +31,11 @@ block content
             td.text-center= despesa.get('vl_unitario') ? despesa.get('vl_unitario').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
             td.text-center= despesa.get('vl_total') ? despesa.get('vl_total').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'              
             td.text-center
-              form(action=`/despesas/${despesa.id}/edit` method="GET" style="display:inline;")
-                button.btn.btn-warning(type="submit" title="Editar despesa") <i class="fa fa-pencil-square" aria-hidden="true"></i>
+              a.badge.bg-warning.text-dark(href=`/despesas/${despesa.id}/edit`, style="margin-right: 5px; cursor:pointer;")
+                i.bi.bi-pencil
               form(action=`/despesas/${despesa.id}/delete` method="POST" style="display:inline;")
-                button.btn.btn-danger(type="submit" title="Excluir despesa") <i class="fa fa-trash" aria-hidden="true"></i>
+                button.badge.bg-danger(type="submit", style="border:none; cursor:pointer;")
+                  i.bi.bi-trash
         tr
           td(colspan="5") Total de despesas na página
           td.text-center= despesas.reduce((sum, despesa) => sum + (despesa.get('vl_total') ? despesa.get('vl_total') : 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -90,4 +91,4 @@ block content
     div 
       .d-flex.justify-content-between.mt-3
         a.btn.btn-secondary(href="/") Voltar
-        a.btn.btn-primary(style="margin-top: 10px;", href="/despesas/add") Adicionar
+        a.btn.btn-primary(href="/despesas/add") Adicionar

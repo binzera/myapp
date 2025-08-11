@@ -1,10 +1,9 @@
 extends ../layout
 
 block content
-  .container
+  .container.mt-5 
     h1 Lista de Categorias
-    a.btn.btn-primary(href="/categorias/add") Adicionar Nova Categoria
-    table
+    table.table.table-striped.table-hover
       thead
         tr
           th Descrição
@@ -14,8 +13,10 @@ block content
           tr
             td= categoria.get('descricao')
             td.text-center
-              form(action=`/categorias/${categoria.id}/edit` method="GET" style="display:inline; margin-right: 5px;")
-                button.btn.btn-warning(type="submit") Editar
+              a.badge.bg-warning.text-dark(href=`/categorias/${categoria.id}/edit`, style="margin-right: 5px; cursor:pointer;")
+                i.bi.bi-pencil
               form(action=`/categorias/${categoria.id}/delete` method="POST" style="display:inline;")
-                button.btn.btn-danger(type="submit") Excluir
+                button.badge.bg-danger(type="submit", style="border:none; cursor:pointer;")
+                  i.bi.bi-trash
     a.btn.btn-secondary(href="/") Voltar
+    a.btn.btn-primary(href="/categorias/add") Adicionar

@@ -1,24 +1,24 @@
 extends ../layout
 
 block content
-  .container
-    .lista-pessoas 
-      h1 Lista de Pessoas
-      table
-        thead
+  .container.mt-5
+    h1 Lista de Pessoas
+    table.table.table-striped.table-hover
+      thead
+        tr
+          th Nome
+          th Tipo
+          th.text-center Ações
+      tbody
+        each pessoa in pessoas
           tr
-            th Nome
-            th Tipo
-            th.text-center Ações
-        tbody
-          each pessoa in pessoas
-            tr
-              td= pessoa.get('nome')
-              td= pessoa.get('tipo')
-              td.text-center
-                form(action=`/pessoas/${pessoa.id}/edit` method="GET" style="display:inline; margin-right: 5px;")
-                  button.btn.btn-warning(type="submit") Editar
-                form(action=`/pessoas/${pessoa.id}/delete` method="POST" style="display:inline;")
-                  button.btn.btn-danger(type="submit") Excluir
-      a.btn.btn-secondary(href="/") Voltar
-      a.btn.btn-primary(style="margin-top: 10px; margin-left: 5px;", href="/pessoas/add") Adicionar
+            td= pessoa.get('nome')
+            td= pessoa.get('tipo')
+            td.text-center
+              a.badge.bg-warning.text-dark(href=`/pessoas/${pessoa.id}/edit`, style="margin-right: 5px; cursor:pointer;")
+                i.bi.bi-pencil
+              form(action=`/pessoas/${pessoa.id}/delete` method="POST" style="display:inline;")
+                button.badge.bg-danger(type="submit", style="border:none; cursor:pointer;")
+                  i.bi.bi-trash
+    a.btn.btn-secondary(href="/") Voltar
+    a.btn.btn-primary(href="/pessoas/add") Adicionar
