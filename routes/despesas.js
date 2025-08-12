@@ -76,7 +76,7 @@ router.get('/', async (req, res) => {
     
     // Paginação no backend
     const page = parseInt(req.query.page) || 1;
-    const perPage = 20;
+    const perPage = 15;
     query.skip((page - 1) * perPage);
     query.limit(perPage);
     

@@ -43,7 +43,7 @@ block content
     div
       if totalPages > 1
         nav(aria-label="Paginação de despesas" style="display: flex; justify-content: flex-end;")
-          ul.pagination.mt-3
+          ul.pagination.mt-2
             // Botão Primeira página
             if page > 1
               li.page-item
@@ -88,6 +88,6 @@ block content
             else
               li.page-item.disabled
                 span.page-link Última
-    div.mt-3
+    div.mt-2
         a.btn.btn-secondary(href="/", style="margin-right: 5px;") Voltar
         a.btn.btn-primary(href="/despesas/add") Adicionar
