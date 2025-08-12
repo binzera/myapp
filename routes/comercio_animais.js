@@ -117,7 +117,7 @@ router.get('/add', async function(req, res, next) {
   const query = new Parse.Query(Pessoa);
   try {
     const pessoas = await query.find();
-    res.render('comercioAnimais/add', { pessoas });
+    res.render('comercio_animais/add', { pessoas });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -158,16 +158,23 @@ router.post('/:id/delete', function(req, res, next) {
 });
 
 // Rota para exibir o formulário de edição de comércios de animais
-router.get('/:id/edit', function(req, res, next) {
+router.get('/:id/edit', async function(req, res, next) {
   const comercioAnimaisId = req.params.id;
+  
+  try {
+    const queryPessoas = new Parse.Query(Pessoa);
+    const pessoas = await queryPessoas.find();
 
-  const query = new Parse.Query(ComercioAnimais);
+    const query = new Parse.Query(ComercioAnimais);
+    query.include('vendedor');
+    query.include('comprador');
+    const comercioAnimais = await query.get(comercioAnimaisId);
+    res.render('comercio_animais/edit', { comercioAnimais, pessoas });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 
-  query.get(comercioAnimaisId)
-    .then(comercioAnimais => {
-      res.render('comercioAnimais/edit', { comercioAnimais });
-    })
-    .catch(error => next(error));
+  
 });
 
 // Rota para processar o formulário de edição de comércios de animais
@@ -176,6 +183,7 @@ router.post('/:id/edit', function(req, res, next) {
   const { data, tipo, sexo, vendedor, comprador, quantidade, valor, peso, idade } = req.body;
 
   const query = new Parse.Query(ComercioAnimais);
+  
 
   query.get(comercioAnimaisId)
     .then(comercioAnimais => {

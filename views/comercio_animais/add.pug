@@ -22,21 +22,21 @@ block content
       .form-group
         label(for="vendedor") Vendedor
         .d-flex.align-items-center
-          select#vendedor.form-control(name="vendedor" required style="flex:1; width: 94%;")
+          select#vendedor.form-control.me-3(name="vendedor" required style="")
             option(value="") Selecione o Vendedor
             each pessoa in pessoas
                 option(value=pessoa.id data-tipo=pessoa.get('tipo'))= pessoa.get('nome')
-          a.btn.btn-sm.btn-success(href="/pessoas/add" title="Cadastrar novo vendedor" style="margin-bottom: 0px;")
-            i(class="fa fa-user-plus" aria-hidden="true")
+          a.btn.btn-sm.btn-success(href="/pessoas/add" title="Cadastrar novo vendedor")
+            i(class="bi bi-person-plus-fill" aria-hidden="true")
       .form-group
         label(for="comprador") Comprador
         .d-flex.align-items-center
-          select#comprador.form-control(name="comprador" required style="flex:1; width: 94%;")
+          select#comprador.form-control.me-3(name="comprador" required style="flex:1;")
             option(value="") Selecione o comprador
             each pessoa in pessoas
                 option(value=pessoa.id data-tipo=pessoa.get('tipo'))= pessoa.get('nome')
-          a.btn.btn-sm.btn-success(href="/pessoas/add" title="Cadastrar novo comprador" style="margin-bottom: 0px;")
-            i(class="fa fa-user-plus" aria-hidden="true")
+          a.btn.btn-sm.btn-success(href="/pessoas/add" title="Cadastrar novo comprador")
+            i(class="bi bi-person-plus-fill" aria-hidden="true")
       .form-group
         label(for="quantidade") Quantidade
         input#quantidade.form-control(type="number" name="quantidade" required style="width: 98%;")
