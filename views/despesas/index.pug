@@ -3,13 +3,17 @@ extends ../layout
 block content
   .container.mt-5
     h1.mb-3 Lista de Despesas
-    form#anoForm(method="GET" action="/despesas" class="mb-2")
-      .input-group.input-group-sm
-        span.input-group-text.bg-light.text-dark(style="min-width: 100px;") Ano
-        select#ano.form-select(name="ano" onchange="document.getElementById('anoForm').submit()")
+    form#filtrosForm(method="GET" action="/despesas" style="display: flex; gap: 10px; align-items: flex-end;")
+      .form-group
+        label(for="ano") Filtrar por Ano
+        select#ano.form-select(name="ano")
           option(value="0") Todos os anos
           each ano in anos
             option(value=ano selected=(ano.toString() === anoSelecionado)) #{ano}
+      .form-group(style="width: 30%")
+        label(for="descricaoFiltro") Filtrar por Descrição
+        input#descricaoFiltro.form-control(type="text" name="descricaoFiltro" value=descricaoFiltro placeholder="Digite parte da descrição...")
+      button.btn.btn-primary(type="submit") Filtrar
     table.table.table-striped.table-hover
       thead
         tr
@@ -38,7 +42,7 @@ block content
                   i.bi.bi-trash(title="Excluir Despesa")
         tr
           td(colspan="5") Total de despesas na página
-          td.text-center= despesas.reduce((sum, despesa) => sum + (despesa.get('vl_total') ? despesa.get('vl_total') : 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+          td.text-center= vlTotalDespesas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
           td
     div
       if totalPages > 1
@@ -47,14 +51,14 @@ block content
             // Botão Primeira página
             if page > 1
               li.page-item
-                a.page-link(href=`/despesas?ano=${anoSelecionado}&page=1`) Primeira
+                a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=1`) Primeira
             else
               li.page-item.disabled
                 span.page-link Primeira
             // Botão Anterior
             if page > 1
               li.page-item
-                a.page-link(href=`/despesas?ano=${anoSelecionado}&page=${page-1}`) «
+                a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${page-1}`) «
             else
               li.page-item.disabled
                 span.page-link «
@@ -70,24 +74,37 @@ block content
                   span.page-link= p
               else
                 li.page-item
-                  a.page-link(href=`/despesas?ano=${anoSelecionado}&page=${p}`)= p
+                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${p}`)= p
             if end < totalPages
               li.page-item.disabled
                 span.page-link ...
             // Botão Próxima
             if page < totalPages
               li.page-item
-                a.page-link(href=`/despesas?ano=${anoSelecionado}&page=${page+1}`) »
+                a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${page+1}`) »
             else
               li.page-item.disabled
                 span.page-link »
             // Botão Última página
             if page < totalPages
               li.page-item
-                a.page-link(href=`/despesas?ano=${anoSelecionado}&page=${totalPages}`) Última
+                a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${totalPages}`) Última
             else
               li.page-item.disabled
                 span.page-link Última
     div.mt-2
         a.btn.btn-secondary(href="/", style="margin-right: 5px;") Voltar
         a.btn.btn-primary(href="/despesas/add") Adicionar
+    script.
+      document.getElementById('descricaoFiltro').addEventListener('input', function() {
+        var filtro = this.value.toLowerCase();
+        var linhas = document.querySelectorAll('tbody tr');
+        linhas.forEach(function(linha) {
+          var descricao = linha.querySelector('td:nth-child(2)');
+          if (descricao && descricao.textContent.toLowerCase().includes(filtro)) {
+            linha.style.display = '';
+          } else {
+            linha.style.display = 'none';
+          }
+        });
+      });

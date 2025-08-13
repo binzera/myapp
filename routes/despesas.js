@@ -74,6 +74,12 @@ router.get('/', async (req, res) => {
     }
     query.include('categoria');
     
+    // Filtro de descrição
+    const descricaoFiltro = req.query.descricaoFiltro ? req.query.descricaoFiltro.trim() : '';
+    if (descricaoFiltro) {
+      query.matches('descricao', descricaoFiltro, 'i');
+    }
+    
     // Paginação no backend
     const page = parseInt(req.query.page) || 1;
     const perPage = 15;
@@ -92,15 +98,17 @@ router.get('/', async (req, res) => {
       categoriasMap[categoria.id] = categoria.get('descricao');
     });
     
+
     // Ordena despesas pela data (mais recente primeiro)
     despesas.sort((a, b) => new Date(b.get('data')) - new Date(a.get('data')));
 
+    let vlTotalDespesas = 0;
     despesas.forEach(despesa => {
       let dataString = despesa.get('data');
       dataString = dataString.toISOString().replace('T', ' ').replace('Z', '');
       const dataOriginal = new Date(dataString);
       despesa.set('dataFormatada', dataOriginal.toLocaleDateString('pt-BR'));
-      
+      vlTotalDespesas += despesa.get('vl_total') ? despesa.get('vl_total') : 0;
       const categoriaObj = despesa.get('categoria');
       if (categoriaObj) {
         despesa.set('categoriaNome', categoriasMap[categoriaObj.id]);
@@ -113,7 +121,9 @@ router.get('/', async (req, res) => {
       anos,
       page,
       totalPages,
-      totalDespesas: count
+      totalDespesas: count,
+      descricaoFiltro,
+      vlTotalDespesas
     });
   } catch (err) {
     res.status(500).render('error', { message: 'Erro ao listar despesas', error: err });
