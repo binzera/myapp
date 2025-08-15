@@ -53,7 +53,7 @@ block content
       ul.pagination.justify-content-center
         if page > 1
           li.page-item
-            a.page-link(href=`/comercio_animais?page=${page - 1}`) « Anterior
+              a.page-link(href=`/comercio_animais?page=${page - 1}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}`) « Anterior
         else
           li.page-item.disabled
             span.page-link « Anterior
@@ -63,10 +63,10 @@ block content
               span.page-link= num
           else
             li.page-item
-              a.page-link(href=`/comercio_animais?page=${num}`)= num
+                a.page-link(href=`/comercio_animais?page=${num}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}`)= num
         if page < totalPages
           li.page-item
-            a.page-link(href=`/comercio_animais?page=${page + 1}`) Próxima »
+              a.page-link(href=`/comercio_animais?page=${page + 1}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}`) Próxima »
         else
           li.page-item.disabled
             span.page-link Próxima »

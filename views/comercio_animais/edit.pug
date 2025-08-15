@@ -43,7 +43,7 @@ block content
               )= pessoa.get('nome')
         .form-group
           label(for="quantidade") Quantidade
-          input#quantidade.form-control.mb-2(type="number" name="quantidade" value=comercioAnimais.get('quantidade') required)
+          input#quantidade.form-control.mb-2(type="number" step="0.01" name="quantidade" value=comercioAnimais.get('quantidade') required)
         .form-group
           label(for="valor") Valor
           input#valor.form-control.mb-2(type="number" step="0.01" name="valor" value=comercioAnimais.get('valor') required)

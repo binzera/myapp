@@ -43,13 +43,13 @@ router.get('/', async (req, res) => {
   const anos = [];
   let anoSelecionado = req.query.ano;
   const page = parseInt(req.query.page) || 1;
-  const limit = 10;
+  const limit = 15;
   const skip = (page - 1) * limit;
 
   if (anoSelecionado == 0) {
     anoSelecionado = null;
   } else if (!anoSelecionado) {
-    anoSelecionado = new Date().getFullYear().toString();
+    anoSelecionado = 0;
   }
 
   try {
@@ -133,7 +133,7 @@ router.post('/add', function(req, res, next) {
   comercioAnimais.set('sexo', sexo);
   comercioAnimais.set('vendedor', vendedor);
   comercioAnimais.set('comprador', comprador);
-  comercioAnimais.set('quantidade', parseInt(quantidade));
+    comercioAnimais.set('quantidade', parseFloat(quantidade));
   comercioAnimais.set('valor', parseFloat(valor));
   comercioAnimais.set('peso', parseFloat(peso));
   comercioAnimais.set('idade', idade);
@@ -192,7 +192,7 @@ router.post('/:id/edit', function(req, res, next) {
       comercioAnimais.set('sexo', sexo);
       comercioAnimais.set('vendedor', vendedor);
       comercioAnimais.set('comprador', comprador);
-      comercioAnimais.set('quantidade', parseInt(quantidade));
+    comercioAnimais.set('quantidade', parseFloat(quantidade));
       comercioAnimais.set('valor', parseFloat(valor));
       comercioAnimais.set('peso', parseFloat(peso));
       comercioAnimais.set('idade', idade);

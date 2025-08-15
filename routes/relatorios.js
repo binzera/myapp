@@ -36,7 +36,7 @@ router.get('/despesas-por-categoria', async (req, res) => {
   }
 
   query.include('categoria');
-  query.limit(1000); // Ajuste conforme necessário
+  query.limit(10000); // Ajuste conforme necessário
   const despesasFiltradas = await query.find();
   console.log(`Despesas filtradas: ${despesasFiltradas.length}`);
 
