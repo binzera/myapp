@@ -12,27 +12,28 @@ html
         button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav")
           span.navbar-toggler-icon
         #navbarNav.collapse.navbar-collapse
-          ul.navbar-nav.me-auto
-            li.nav-item
-              a.nav-link(href="/despesas") Despesas
-            li.nav-item
-              a.nav-link(href="/comercio_animais") Comércio de Animais
-            li.nav-item.dropdown
-              a.nav-link.dropdown-toggle(href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false")
-                | Cadastros Básicos
-              ul.dropdown-menu(aria-labelledby="navbarDropdown")
-                li
-                  a.dropdown-item(href="/pessoas") Pessoas
-                li
-                  a.dropdown-item(href="/categorias") Categorias
-            li.nav-item.dropdown
-              a.nav-link.dropdown-toggle(href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false")
-                | Relatórios
-              ul.dropdown-menu(aria-labelledby="navbarDropdown")
-                li
-                  a.dropdown-item(href="/relatorios/despesas-por-categoria") Despesas por Categoria
-                li
-                  a.dropdown-item(href="/relatorios/vendas-por-vendedor") Vendas por Vendedor
+          if user
+            ul.navbar-nav.me-auto
+              li.nav-item
+                a.nav-link(href="/despesas") Despesas
+              li.nav-item
+                a.nav-link(href="/comercio_animais") Comércio de Animais
+              li.nav-item.dropdown
+                a.nav-link.dropdown-toggle(href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false")
+                  | Cadastros Básicos
+                ul.dropdown-menu(aria-labelledby="navbarDropdown")
+                  li
+                    a.dropdown-item(href="/pessoas") Pessoas
+                  li
+                    a.dropdown-item(href="/categorias") Categorias
+              li.nav-item.dropdown
+                a.nav-link.dropdown-toggle(href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false")
+                  | Relatórios
+                ul.dropdown-menu(aria-labelledby="navbarDropdown")
+                  li
+                    a.dropdown-item(href="/relatorios/despesas-por-categoria") Despesas por Categoria
+                  li
+                    a.dropdown-item(href="/relatorios/vendas-por-vendedor") Vendas por Vendedor
           ul.navbar-nav.ms-auto
             if !user
               li.nav-item

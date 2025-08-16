@@ -21,6 +21,6 @@ block content
         select#categoria.form-control(name="categoriaId" required)
           each categoria in categorias
             option(value=categoria.id)= categoria.get('descricao')
-      .form-group
+      .form-group.mt-3
         button.btn.btn-secondary(type="button" onclick="window.location.href='/despesas'" style="display:inline; margin-right: 5px;") Voltar
         button.btn.btn-primary(type="submit") Adicionar
