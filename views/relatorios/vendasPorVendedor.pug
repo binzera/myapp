@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+  .container.mt-5
+    h1.mb-4 Relatório de Vendas por Vendedor
+    table.table.table-bordered.table-striped
+      thead
+        tr
+          th Vendedor
+          th Total de Vendas
+      tbody
+        each item in relatorio
+          tr
+            td= item.vendedor
+            td= item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    a.btn.btn-secondary.mt-4(href="/") Voltar

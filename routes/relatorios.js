@@ -61,4 +61,49 @@ router.get('/despesas-por-categoria', async (req, res) => {
   });
 });
 
+// Relatório: Soma das vendas agrupadas por vendedor
+const Pessoa = require('../models/pessoa');
+const ComercioAnimais = require('../models/comercio_animais');
+
+router.get('/vendas-por-vendedor', async (req, res) => {
+  try {
+    const query = new Parse.Query(ComercioAnimais);
+    query.equalTo('tipo', 'Venda');
+    query.select(['vendedor', 'quantidade', 'valor']);
+    const vendas = await query.find();
+
+    // Agrupa por vendedor e soma total
+    const resultado = {};
+    vendas.forEach(venda => {
+      const vendedorId = venda.get('vendedor');
+      const quantidade = parseFloat(venda.get('quantidade')) || 0;
+      const valor = parseFloat(venda.get('valor')) || 0;
+      const total = quantidade * valor;
+      if (!resultado[vendedorId]) {
+        resultado[vendedorId] = { total: 0 };
+      }
+      resultado[vendedorId].total += total;
+    });
+
+    // Buscar nomes dos vendedores
+    const vendedoresIds = Object.keys(resultado);
+    const pessoasQuery = new Parse.Query(Pessoa);
+    pessoasQuery.containedIn('objectId', vendedoresIds);
+    const pessoas = await pessoasQuery.find();
+    pessoas.forEach(pessoa => {
+      resultado[pessoa.id].nome = pessoa.get('nome');
+    });
+
+    // Prepara dados para a view
+    const relatorio = vendedoresIds.map(id => ({
+      vendedor: resultado[id].nome || id,
+      total: resultado[id].total
+    }));
+
+    res.render('relatorios/vendasPorVendedor', { relatorio });
+  } catch (err) {
+    res.status(500).render('error', { message: 'Erro ao gerar relatório', error: err });
+  }
+});
+
 module.exports = router;

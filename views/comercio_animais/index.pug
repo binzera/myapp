@@ -10,6 +10,12 @@ block content
           option(value="0") Todos os anos
           each ano in anos
             option(value=ano selected=(ano.toString() === anoSelecionado)) #{ano}
+        span.input-group-text.bg-light.text-dark(style="min-width: 100px; margin-left: 10px;") Vendedor
+        select#vendedor.form-select(name="vendedor" onchange="document.getElementById('anoForm').submit()")
+          option(value="") Todos os vendedores
+          each pessoa in pessoas
+            if pessoa.get('tipo') === 'Sócio'
+              option(value=pessoa.id selected=(vendedorSelecionado === pessoa.id))= pessoa.get('nome')
     // tabela de animais
     table.table.table-striped.table-hover
       thead
@@ -53,7 +59,7 @@ block content
       ul.pagination.justify-content-center
         if page > 1
           li.page-item
-              a.page-link(href=`/comercio_animais?page=${page - 1}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}`) « Anterior
+              a.page-link(href=`/comercio_animais?page=${page - 1}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}${vendedorSelecionado ? `&vendedor=${vendedorSelecionado}` : ''}`) « Anterior
         else
           li.page-item.disabled
             span.page-link « Anterior
@@ -63,10 +69,10 @@ block content
               span.page-link= num
           else
             li.page-item
-                a.page-link(href=`/comercio_animais?page=${num}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}`)= num
+                a.page-link(href=`/comercio_animais?page=${num}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}${vendedorSelecionado ? `&vendedor=${vendedorSelecionado}` : ''}`)= num
         if page < totalPages
           li.page-item
-              a.page-link(href=`/comercio_animais?page=${page + 1}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}`) Próxima »
+              a.page-link(href=`/comercio_animais?page=${page + 1}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}${vendedorSelecionado ? `&vendedor=${vendedorSelecionado}` : ''}`) Próxima »
         else
           li.page-item.disabled
             span.page-link Próxima »

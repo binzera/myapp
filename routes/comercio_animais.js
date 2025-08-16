@@ -42,6 +42,7 @@ router.get('/', async (req, res) => {
   const ComercioAnimal = Parse.Object.extend('ComercioAnimais');
   const anos = [];
   let anoSelecionado = req.query.ano;
+  let vendedorSelecionado = req.query.vendedor || '';
   const page = parseInt(req.query.page) || 1;
   const limit = 15;
   const skip = (page - 1) * limit;
@@ -73,6 +74,9 @@ router.get('/', async (req, res) => {
       query.greaterThanOrEqualTo('data', startDate);
       query.lessThanOrEqualTo('data', endDate);
     }
+    if (vendedorSelecionado) {
+      query.equalTo('vendedor', vendedorSelecionado);
+    }
     query.descending('data');
     query.skip(skip);
     query.limit(limit);
@@ -84,6 +88,9 @@ router.get('/', async (req, res) => {
       const endDate = new Date(`${anoSelecionado}-12-31T23:59:59.999Z`);
       countQuery.greaterThanOrEqualTo('data', startDate);
       countQuery.lessThanOrEqualTo('data', endDate);
+    }
+    if (vendedorSelecionado) {
+      countQuery.equalTo('vendedor', vendedorSelecionado);
     }
     const totalCount = await countQuery.count();
     const totalPages = Math.ceil(totalCount / limit);
@@ -103,6 +110,8 @@ router.get('/', async (req, res) => {
       comercioAnimais,
       anoSelecionado,
       anos,
+      vendedorSelecionado,
+      pessoas,
       page,
       totalPages
     });
