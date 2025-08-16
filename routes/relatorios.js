@@ -67,12 +67,37 @@ const ComercioAnimais = require('../models/comercio_animais');
 
 router.get('/vendas-por-vendedor', async (req, res) => {
   try {
+    // Buscar anos disponíveis
+    const queryAnos = new Parse.Query(ComercioAnimais);
+    queryAnos.select('data');
+    queryAnos.ascending('data');
+    let anoInicial = await queryAnos.first();
+    let anos = [];
+    if(!anoInicial) {
+      anoInicial = new Date().getFullYear().toString();
+    } else {
+      anoInicial = anoInicial.get('data').getFullYear();
+    }
+    const anoAtual = new Date().getFullYear();
+    for (let ano = anoInicial; ano <= anoAtual; ano++) {
+      anos.push(ano);
+    }
+
+    // Filtro por ano
+    const anoSelecionado = req.query.ano || '0';
     const query = new Parse.Query(ComercioAnimais);
     query.equalTo('tipo', 'Venda');
+    if (anoSelecionado !== '0') {
+      const startDate = new Date(`${anoSelecionado}-01-01T00:00:00.000Z`);
+      const endDate = new Date(`${anoSelecionado}-12-31T23:59:59.999Z`);
+      query.greaterThanOrEqualTo('data', startDate);
+      query.lessThanOrEqualTo('data', endDate);
+    }
     query.select(['vendedor', 'quantidade', 'valor']);
+    query.limit(10000);
     const vendas = await query.find();
 
-    // Agrupa por vendedor e soma total
+    // Agrupa por vendedor, soma total e soma quantidade
     const resultado = {};
     vendas.forEach(venda => {
       const vendedorId = venda.get('vendedor');
@@ -80,9 +105,10 @@ router.get('/vendas-por-vendedor', async (req, res) => {
       const valor = parseFloat(venda.get('valor')) || 0;
       const total = quantidade * valor;
       if (!resultado[vendedorId]) {
-        resultado[vendedorId] = { total: 0 };
+        resultado[vendedorId] = { total: 0, quantidade: 0 };
       }
       resultado[vendedorId].total += total;
+      resultado[vendedorId].quantidade += quantidade;
     });
 
     // Buscar nomes dos vendedores
@@ -97,10 +123,11 @@ router.get('/vendas-por-vendedor', async (req, res) => {
     // Prepara dados para a view
     const relatorio = vendedoresIds.map(id => ({
       vendedor: resultado[id].nome || id,
-      total: resultado[id].total
+      total: resultado[id].total,
+      quantidade: resultado[id].quantidade
     }));
 
-    res.render('relatorios/vendasPorVendedor', { relatorio });
+    res.render('relatorios/vendasPorVendedor', { relatorio, anos, anoSelecionado });
   } catch (err) {
     res.status(500).render('error', { message: 'Erro ao gerar relatório', error: err });
   }

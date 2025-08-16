@@ -3,14 +3,26 @@ extends ../layout
 block content
   .container.mt-5
     h1.mb-4 Relatório de Vendas por Vendedor
+    form(method="GET" action="/relatorios/vendas-por-vendedor" class="mb-3")
+      .input-group.input-group-sm
+        span.input-group-text.bg-light.text-dark(style="min-width: 100px;") Ano
+        select.form-select(name="ano" onchange="this.form.submit()")
+          option(value="0" selected=anoSelecionado==0) Todos os anos
+          each ano in anos
+            option(value=ano selected=(ano.toString() === anoSelecionado)) #{ano}
     table.table.table-bordered.table-striped
       thead
         tr
           th Vendedor
-          th Total de Vendas
+          th Quantidade de animais
+          th Valor Total
       tbody
         each item in relatorio
           tr
             td= item.vendedor
+            td= Number(item.quantidade).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
             td= item.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+        tr.bg-light.text-bold
+          td(colspan=2) Total Geral
+          td= relatorio.reduce((sum, item) => sum + item.total, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
     a.btn.btn-secondary.mt-4(href="/") Voltar

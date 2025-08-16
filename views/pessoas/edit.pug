@@ -13,6 +13,6 @@ block content
           option(value="") Selecione o Tipo
           option(value="Sócio" selected=pessoa.get('tipo') === 'Sócio') Sócio
           option(value="Cliente" selected=pessoa.get('tipo') === 'Cliente') Cliente
-      .form-group
+      .form-group.mt-3
         button.btn.btn-secondary(type="button" onclick="window.location.href='/pessoas'" style="display:inline; margin-right: 5px;") Voltar
         button.btn.btn-primary(type="submit") Salvar

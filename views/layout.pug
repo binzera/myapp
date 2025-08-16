@@ -12,7 +12,7 @@ html
         button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav")
           span.navbar-toggler-icon
         #navbarNav.collapse.navbar-collapse
-          ul.navbar-nav
+          ul.navbar-nav.me-auto
             li.nav-item
               a.nav-link(href="/despesas") Despesas
             li.nav-item
@@ -31,7 +31,16 @@ html
               ul.dropdown-menu(aria-labelledby="navbarDropdown")
                 li
                   a.dropdown-item(href="/relatorios/despesas-por-categoria") Despesas por Categoria
-                  li
-                    a.dropdown-item(href="/relatorios/vendas-por-vendedor") Vendas por Vendedor
+                li
+                  a.dropdown-item(href="/relatorios/vendas-por-vendedor") Vendas por Vendedor
+          ul.navbar-nav.ms-auto
+            if !user
+              li.nav-item
+                a.nav-link(href="/auth/login") Entrar
+            else
+              li.nav-item
+                span.nav-link.text-white Olá, #{user.username}
+              li.nav-item
+                a.nav-link(href="/auth/logout") Sair
     block content
     
