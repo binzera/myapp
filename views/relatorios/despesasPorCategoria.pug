@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   .container.mt-5
-    h1.text-center.mb-3 Valor Total das Despesas por Categoria
+    h1.text-center.mb-3 Despesas por Categoria
     form#anoForm(method="GET" action="/relatorios/despesas-por-categoria" class="mb-4")
       .input-group.input-group-sm
         span.input-group-text.bg-light.text-dark(style="min-width: 100px;") Ano
@@ -23,6 +23,39 @@ block content
             td.text-center= categoria
             td.text-center= valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
         tr
-          td.text-center.text-bold Total de despesas
-          td.text-center.text-bold= Object.values(relatorio).reduce((sum, valor) => sum + valor, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+          td(style="font-weight: bold;").text-center Total de despesas
+          td(style="font-weight: bold;").text-center= Object.values(relatorio).reduce((sum, valor) => sum + valor, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+
+    // Gráfico de pizza    
+    script(src="https://cdn.jsdelivr.net/npm/chart.js")
+    h3.mt-5.mb-3.text-center Gráfico de Despesas por Categoria
+    .d-flex.justify-content-center(style="width: 50%;margin-left:25%;")
+      canvas#pieChart(width="400px" height="400px")
+    script.
+      const categorias = !{JSON.stringify(Object.keys(relatorio))};
+      const valores = !{JSON.stringify(Object.values(relatorio))};
+      const ctx = document.getElementById('pieChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: categorias,
+          datasets: [{
+            data: valores,
+            backgroundColor: [
+              '#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6610f2', '#fd7e14', '#6f42c1', '#20c997', '#e83e8c'
+            ],
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+            },
+            title: {
+              display: false
+            }
+          }
+        }
+      });
     a.btn.btn-secondary(href="/") Voltar

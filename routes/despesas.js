@@ -80,11 +80,12 @@ router.get('/', async (req, res) => {
       query.matches('descricao', descricaoFiltro, 'i');
     }
     
-    // Paginação no backend
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 15;
-    query.skip((page - 1) * perPage);
-    query.limit(perPage);
+  // Paginação no backend
+  const page = parseInt(req.query.page) || 1;
+  const perPage = 15;
+  query.descending('data');
+  query.skip((page - 1) * perPage);
+  query.limit(perPage);
     
     const despesas = await query.find();
     // Buscar o total de registros para calcular totalPages
@@ -100,7 +101,7 @@ router.get('/', async (req, res) => {
     
 
     // Ordena despesas pela data (mais recente primeiro)
-    despesas.sort((a, b) => new Date(b.get('data')) - new Date(a.get('data')));
+    //despesas.sort((a, b) => new Date(b.get('data')) - new Date(a.get('data')));
 
     let vlTotalDespesas = 0;
     despesas.forEach(despesa => {
