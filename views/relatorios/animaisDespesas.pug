@@ -1,0 +1,61 @@
+extends ../layout
+
+block content
+  .container.mt-5
+    h1.mb-4 Relatório: Vendas de Animais x Despesas
+    form(method="GET" action="/relatorios/animais-despesas" class="mb-3")
+      .input-group.input-group-sm
+        span.input-group-text.bg-light.text-dark(style="min-width: 100px;") Ano
+        select.form-select(name="ano" onchange="this.form.submit()")
+          option(value="0" selected=anoSelecionado==0) Todos os anos
+          each ano in anos
+            option(value=ano selected=(ano.toString() === anoSelecionado)) #{ano}
+    .row.mt-4
+      .col-md-6.offset-md-3
+        table.table.table-bordered.table-striped
+          thead
+            tr
+              th Categoria
+              th Valor Total
+          tbody
+            tr
+              td Vendas de Animais
+              td= vendasTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+            tr
+              td Despesas
+              td= despesasTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+            tr.bg-light.text-bold
+              td Saldo (Vendas - Despesas)
+              td= (vendasTotal - despesasTotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    h3.mt-5.mb-3.text-center Gráfico de Pizza
+    .d-flex.justify-content-center(style="width: 50%;margin-left:25%;")
+      canvas#pieChart(width="400" height="400")
+    script(src="https://cdn.jsdelivr.net/npm/chart.js")
+    script.
+      const categorias = ['Vendas de Animais', 'Despesas'];
+      const valores = [!{vendasTotal}, !{despesasTotal}];
+      const ctx = document.getElementById('pieChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: categorias,
+          datasets: [{
+            data: valores,
+            backgroundColor: [
+              '#28a745', '#dc3545'
+            ],
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+            },
+            title: {
+              display: false
+            }
+          }
+        }
+      });
+    a.btn.btn-secondary.mt-4(href="/") Voltar

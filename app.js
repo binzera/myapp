@@ -13,6 +13,7 @@ var categoriasRouter = require('./routes/categorias');
 var comercioAnimaisRouter = require('./routes/comercio_animais');
 var pessoasRouter = require('./routes/pessoas');
 var relatoriosRouter = require('./routes/relatorios');
+var relatoriosAnimaisDespesasRouter = require('./routes/relatorios_animais_despesas');
 var authRouter = require('./routes/auth');
 
 var app = express();
@@ -61,6 +62,7 @@ app.use('/categorias', categoriasRouter);
 app.use('/comercio_animais', comercioAnimaisRouter);
 app.use('/pessoas', pessoasRouter);
 app.use('/relatorios', relatoriosRouter);
+app.use('/relatorios/animais-despesas', relatoriosAnimaisDespesasRouter);
 app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler
