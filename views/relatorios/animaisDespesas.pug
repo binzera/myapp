@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   .container.mt-5
-    h1.mb-4 Relatório: Vendas de Animais x Despesas
+    h1.mb-4 Relatório: Venda de Animais x Despesas
     form(method="GET" action="/relatorios/animais-despesas" class="mb-3")
       .input-group.input-group-sm
         span.input-group-text.bg-light.text-dark(style="min-width: 100px;") Ano
@@ -19,7 +19,7 @@ block content
               th Valor Total
           tbody
             tr
-              td Vendas de Animais
+              td Venda de Animais
               td= vendasTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
             tr
               td Despesas
