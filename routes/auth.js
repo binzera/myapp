@@ -12,6 +12,7 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
       const user = await Parse.User.logIn(username, password);
+      console.log('Usuário logado com sucesso:', user.get('username'));
       // Buscar roles do usuário
       const roleQuery = new Parse.Query(Parse.Role);
       roleQuery.equalTo('users', user);
