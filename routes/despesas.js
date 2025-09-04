@@ -158,7 +158,15 @@ router.post('/add', async (req, res) => {
   despesa.set('categoria', categoria);
   try {
     await despesa.save();
-    res.redirect('/despesas');
+    // Recupera ano e página da query string
+    const ano = req.body.ano || '';
+    const page = req.body.page || '';
+    let redirectUrl = '/despesas';
+    const params = [];
+    if (ano) params.push(`ano=${ano}`);
+    if (page) params.push(`page=${page}`);
+    if (params.length) redirectUrl += '?' + params.join('&');
+    res.redirect(redirectUrl);
   } catch (err) {
     res.status(500).render('error', { message: 'Erro ao adicionar despesa', error: err });
   }
@@ -180,6 +188,8 @@ router.post('/:id/delete', async (req, res) => {
 // Rota para exibir o formulário de edição de despesas
 router.get('/:id/edit', async function(req, res, next) {
   const despesaId = req.params.id;
+  const anoSelecionado = req.query.ano || '';
+  const page = req.query.page || '';
 
   const queryDespesa = new Parse.Query(Despesa);
   const queryCategoria = new Parse.Query(Categoria);
@@ -187,7 +197,7 @@ router.get('/:id/edit', async function(req, res, next) {
   try {
     const despesa = await queryDespesa.get(despesaId);
     const categorias = await queryCategoria.find();
-    res.render('despesas/edit', { despesa, categorias });
+    res.render('despesas/edit', { despesa, categorias, anoSelecionado, page });
   } catch (error) {
     next(error);
   }
@@ -209,7 +219,15 @@ router.post('/:id/edit', async (req, res) => {
     despesa.set('vl_total', parseFloat(quantidade) * parseFloat(vl_unitario));
     despesa.set('categoria', categoria);
     await despesa.save();
-    res.redirect('/despesas');
+    // Recupera ano e página da query string
+    const ano = req.body.ano || '';
+    const page = req.body.page || '';
+    let redirectUrl = '/despesas';
+    const params = [];
+    if (ano) params.push(`ano=${ano}`);
+    if (page) params.push(`page=${page}`);
+    if (params.length) redirectUrl += '?' + params.join('&');
+    res.redirect(redirectUrl);
   } catch (err) {
     res.status(500).render('error', { message: 'Erro ao editar despesa', error: err });
   }

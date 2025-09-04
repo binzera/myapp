@@ -5,6 +5,8 @@ block content
     h1.text-center Editar Despesa
     .form-container
       form(action=`/despesas/${despesa.id}/edit` method="POST")
+        input(type="hidden" name="ano" value=(typeof anoSelecionado !== 'undefined' ? anoSelecionado : ''))
+        input(type="hidden" name="page" value=(typeof page !== 'undefined' ? page : ''))
         .form-group
           label.form-label(for="data") Data
           input#data.form-control.mb-2(type="date" name="data" value=despesa.get('data').toISOString().split('T')[0] required)
@@ -23,5 +25,5 @@ block content
             each categoria in categorias
               option(value=categoria.id selected=despesa.get('categoria') && despesa.get('categoria').id === categoria.id)= categoria.get('descricao')
         .form-group.mt-3
-          button.btn.btn-secondary(type="button" onclick="window.location.href='/despesas'" style="display:inline; margin-right: 5px;") Voltar
+          button.btn.btn-secondary(type="button" onclick=`window.location.href='/despesas?ano=${typeof anoSelecionado !== 'undefined' ? anoSelecionado : ''}&page=${typeof page !== 'undefined' ? page : ''}'` style="display:inline; margin-right: 5px;") Voltar
           button.btn.btn-primary(type="submit") Salvar

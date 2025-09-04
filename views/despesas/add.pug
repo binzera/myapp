@@ -4,6 +4,8 @@ block content
   .container
     h1 Adicionar Despesa
     form(action="/despesas/add" method="POST")
+      input(type="hidden" name="ano" value=(typeof anoSelecionado !== 'undefined' ? anoSelecionado : ''))
+      input(type="hidden" name="page" value=(typeof page !== 'undefined' ? page : ''))
       .form-group
         label(for="data") Data
         input#data.form-control(type="date" name="data" value=(new Date()).toISOString().split('T')[0] required)
@@ -22,5 +24,5 @@ block content
           each categoria in categorias
             option(value=categoria.id)= categoria.get('descricao')
       .form-group.mt-3
-        button.btn.btn-secondary(type="button" onclick="window.location.href='/despesas'" style="display:inline; margin-right: 5px;") Voltar
+        button.btn.btn-secondary(type="button" onclick=`window.location.href='/despesas?ano=${typeof anoSelecionado !== 'undefined' ? anoSelecionado : ''}&page=${typeof page !== 'undefined' ? page : ''}'` style="display:inline; margin-right: 5px;") Voltar
         button.btn.btn-primary(type="submit") Adicionar
