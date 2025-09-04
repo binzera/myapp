@@ -13,10 +13,12 @@ block content
           tr
             td= categoria.get('descricao')
             td.text-center
-              a.badge.bg-warning.text-dark(href=`/categorias/${categoria.id}/edit`, style="margin-right: 5px; cursor:pointer;")
-                i.bi.bi-pencil
-              form(action=`/categorias/${categoria.id}/delete` method="POST" style="display:inline;")
-                button.badge.bg-danger(type="submit", style="border:none; cursor:pointer;")
-                  i.bi.bi-trash
+              if user && user.roles && user.roles.includes('ROLE_ADMIN')
+                a.badge.bg-warning.text-dark(href=`/categorias/${categoria.id}/edit`, style="margin-right: 5px; cursor:pointer;")
+                  i.bi.bi-pencil
+                form(action=`/categorias/${categoria.id}/delete` method="POST" style="display:inline;")
+                  button.badge.bg-danger(type="submit", style="border:none; cursor:pointer;")
+                    i.bi.bi-trash
     a.btn.btn-secondary(href="/", style="margin-right: 5px;") Voltar
-    a.btn.btn-primary(href="/categorias/add") Adicionar
+    if user && user.roles && user.roles.includes('ROLE_ADMIN')
+      a.btn.btn-primary(href="/categorias/add") Adicionar

@@ -11,13 +11,20 @@ router.get('/login', (req, res) => {
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
-    const user = await Parse.User.logIn(username, password);
-    req.session.user = {
-      id: user.id,
-      username: user.get('username'),
-      email: user.get('email')
-    };
-    res.redirect('/');
+      const user = await Parse.User.logIn(username, password);
+      // Buscar roles do usuário
+      const roleQuery = new Parse.Query(Parse.Role);
+      roleQuery.equalTo('users', user);
+      const roles = await roleQuery.find();
+      const roleNames = roles.map(role => role.get('name'));
+      console.log('Funções do usuário:', roleNames);
+      req.session.user = {
+        id: user.id,
+        username: user.get('username'),
+        email: user.get('email'),
+        roles: roleNames
+      };
+      res.redirect('/');
   } catch (err) {
     res.render('auth/login', { error: 'Usuário ou senha inválidos.' });
   }

@@ -35,11 +35,12 @@ block content
             td.text-center= despesa.get('vl_unitario') ? despesa.get('vl_unitario').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
             td.text-center= despesa.get('vl_total') ? despesa.get('vl_total').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'              
             td.text-center
-              a.btn.btn-outline-warning.btn-sm(href=`/despesas/${despesa.id}/edit?ano=${anoSelecionado ? anoSelecionado : '0'}&page=${page}&descricaoFiltro=${descricaoFiltro}`, style="border:none; cursor:pointer;")
-                i.bi.bi-pencil(title="Editar Despesa")
-              form(action=`/despesas/${despesa.id}/delete` method="POST" style="display:inline;")
-                button.btn.btn-outline-danger.btn-sm(type="submit", style="border:none; cursor:pointer;")
-                  i.bi.bi-trash(title="Excluir Despesa")
+              if user && user.roles && user.roles.includes('ROLE_ADMIN')
+                a.btn.btn-outline-warning.btn-sm(href=`/despesas/${despesa.id}/edit?ano=${anoSelecionado ? anoSelecionado : '0'}&page=${page}&descricaoFiltro=${descricaoFiltro}`, style="border:none; cursor:pointer;")
+                  i.bi.bi-pencil(title="Editar Despesa")
+                form(action=`/despesas/${despesa.id}/delete` method="POST" style="display:inline;")
+                  button.btn.btn-outline-danger.btn-sm(type="submit", style="border:none; cursor:pointer;")
+                    i.bi.bi-trash(title="Excluir Despesa")
         tr
           td(colspan="5") Total de despesas na página
           td.text-center= vlTotalDespesas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -94,7 +95,8 @@ block content
                 span.page-link Última
     div.mt-2
         a.btn.btn-secondary(href="/", style="margin-right: 5px;") Voltar
-        a.btn.btn-primary(href=`/despesas/add?ano=${anoSelecionado ? anoSelecionado : '0'}&page=${page}&descricaoFiltro=${descricaoFiltro}`) Adicionar
+        if user && user.roles && user.roles.includes('ROLE_ADMIN')
+          a.btn.btn-primary(href=`/despesas/add?ano=${anoSelecionado ? anoSelecionado : '0'}&page=${page}&descricaoFiltro=${descricaoFiltro}`) Adicionar
     script.
       document.getElementById('descricaoFiltro').addEventListener('input', function() {
         var filtro = this.value.toLowerCase();
