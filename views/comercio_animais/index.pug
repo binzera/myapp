@@ -17,66 +17,67 @@ block content
             if pessoa.get('tipo') === 'Sócio'
               option(value=pessoa.id selected=(vendedorSelecionado === pessoa.id))= pessoa.get('nome')
     // tabela de animais
-    table.table.table-striped.table-hover
-      thead
-        tr
-          th Data
-          th Tipo
-          th Sexo
-          th Vendedor
-          th Comprador
-          th Quantidade
-          th Valor Unitário
-          th Valor Total
-          th Peso (@)
-          th Idade
-          th.text-center Ações
-      tbody
-        each comercioAnimal in comercioAnimais
+    .table-responsive
+      table.table.table-striped.table-hover
+        thead
           tr
-            td= new Date(comercioAnimal.get('data')).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-            td= comercioAnimal.get('tipo')
-            td= comercioAnimal.get('sexo')
-            td.text-center= comercioAnimal.get('vendedorNome')
-            td.text-center= comercioAnimal.get('compradorNome')
-            td.text-center= comercioAnimal.get('quantidade')
-            td= comercioAnimal.get('valor').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-            td.text-center= (comercioAnimal.get('quantidade') && comercioAnimal.get('valor')) ? (comercioAnimal.get('quantidade') * comercioAnimal.get('valor')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
-            td= comercioAnimal.get('peso')
-            td= comercioAnimal.get('idade')
-            td.text-center
-              if user && user.roles && user.roles.includes('ROLE_ADMIN')
-                a.badge.bg-warning.text-dark(href=`/comercio_animais/${comercioAnimal.id}/edit`, style="margin-right: 5px; cursor:pointer;")
-                  i.bi.bi-pencil
-                form(action=`/comercio_animais/${comercioAnimal.id}/delete` method="POST" style="display:inline;")
-                  button.badge.bg-danger(type="submit", style="border:none; cursor:pointer;")
-                    i.bi.bi-trash
-        tr
-          td(colspan="6")
-          td.text-right.text-bold Total
-          td.text-center= comercioAnimais.reduce((sum, comercioAnimal) => sum + ((comercioAnimal.get('quantidade') && comercioAnimal.get('valor')) ? comercioAnimal.get('quantidade') * comercioAnimal.get('valor') : 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-    // controles de paginação
-    nav.mt-4
-      ul.pagination.justify-content-center
-        if page > 1
-          li.page-item
-              a.page-link(href=`/comercio_animais?page=${page - 1}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}${vendedorSelecionado ? `&vendedor=${vendedorSelecionado}` : ''}`) « Anterior
-        else
-          li.page-item.disabled
-            span.page-link « Anterior
-        each num in Array(totalPages).fill().map((_, i) => i + 1)
-          if num === page
-            li.page-item.active
-              span.page-link= num
-          else
+            th Data
+            th Tipo
+            th Sexo
+            th Vendedor
+            th Comprador
+            th Quantidade
+            th Valor Unitário
+            th Valor Total
+            th Peso (@)
+            th Idade
+            th.text-center Ações
+        tbody
+          each comercioAnimal in comercioAnimais
+            tr
+              td= new Date(comercioAnimal.get('data')).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+              td= comercioAnimal.get('tipo')
+              td= comercioAnimal.get('sexo')
+              td.text-center= comercioAnimal.get('vendedorNome')
+              td.text-center= comercioAnimal.get('compradorNome')
+              td.text-center= comercioAnimal.get('quantidade')
+              td= comercioAnimal.get('valor').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+              td.text-center= (comercioAnimal.get('quantidade') && comercioAnimal.get('valor')) ? (comercioAnimal.get('quantidade') * comercioAnimal.get('valor')).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'
+              td= comercioAnimal.get('peso')
+              td= comercioAnimal.get('idade')
+              td.text-center
+                if user && user.roles && user.roles.includes('ROLE_ADMIN')
+                  a.badge.bg-warning.text-dark(href=`/comercio_animais/${comercioAnimal.id}/edit`, style="margin-right: 5px; cursor:pointer;")
+                    i.bi.bi-pencil
+                  form(action=`/comercio_animais/${comercioAnimal.id}/delete` method="POST" style="display:inline;")
+                    button.badge.bg-danger(type="submit", style="border:none; cursor:pointer;")
+                      i.bi.bi-trash
+          tr
+            td(colspan="6")
+            td.text-right.text-bold Total
+            td.text-center= comercioAnimais.reduce((sum, comercioAnimal) => sum + ((comercioAnimal.get('quantidade') && comercioAnimal.get('valor')) ? comercioAnimal.get('quantidade') * comercioAnimal.get('valor') : 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      // controles de paginação
+      nav.mt-4
+        ul.pagination.justify-content-center
+          if page > 1
             li.page-item
-                a.page-link(href=`/comercio_animais?page=${num}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}${vendedorSelecionado ? `&vendedor=${vendedorSelecionado}` : ''}`)= num
-        if page < totalPages
-          li.page-item
-              a.page-link(href=`/comercio_animais?page=${page + 1}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}${vendedorSelecionado ? `&vendedor=${vendedorSelecionado}` : ''}`) Próxima »
-        else
-          li.page-item.disabled
-            span.page-link Próxima »
+                a.page-link(href=`/comercio_animais?page=${page - 1}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}${vendedorSelecionado ? `&vendedor=${vendedorSelecionado}` : ''}`) « Anterior
+          else
+            li.page-item.disabled
+              span.page-link « Anterior
+          each num in Array(totalPages).fill().map((_, i) => i + 1)
+            if num === page
+              li.page-item.active
+                span.page-link= num
+            else
+              li.page-item
+                  a.page-link(href=`/comercio_animais?page=${num}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}${vendedorSelecionado ? `&vendedor=${vendedorSelecionado}` : ''}`)= num
+          if page < totalPages
+            li.page-item
+                a.page-link(href=`/comercio_animais?page=${page + 1}${anoSelecionado && anoSelecionado != 0 ? `&ano=${anoSelecionado}` : ''}${vendedorSelecionado ? `&vendedor=${vendedorSelecionado}` : ''}`) Próxima »
+          else
+            li.page-item.disabled
+              span.page-link Próxima »
     a.btn.btn-secondary(href="/", style="margin-right: 5px;") Voltar
     if user && user.roles && user.roles.includes('ROLE_ADMIN')
       a.btn.btn-primary(href="/comercio_animais/add") Adicionar
