@@ -4,3 +4,47 @@ block content
   .container.mt-5
     h1 Bem-vindo ao Sistema de Gestão da Faz. Jordênia
     p Selecione uma opção no menu acima para começar.
+    .row.mt-4
+      .col-md-3.mb-3
+        a.card.text-decoration-none(href="/despesas")
+          .card-body.text-center
+            i.bi.bi-cash-coin.fs-1.mb-2
+            h5.card-title Despesas
+            p.card-text Gerencie e visualize despesas.
+      .col-md-3.mb-3
+        a.card.text-decoration-none(href="/comercio_animais")
+          .card-body.text-center
+            i.bi.bi-box-seam.fs-1.mb-2
+            h5.card-title Comércio de Animais
+            p.card-text Controle de vendas e compras de animais.
+      .col-md-3.mb-3
+        a.card.text-decoration-none(href="/relatorios/despesas-por-categoria")
+          .card-body.text-center
+            i.bi.bi-bar-chart-line.fs-1.mb-2
+            h5.card-title Relatório de Despesas por Categoria
+            p.card-text Visualize gráficos e totais das despesas.
+      .col-md-3.mb-3
+        a.card.text-decoration-none(href="/relatorios/animais-despesas")
+          .card-body.text-center
+            i.bi.bi-pie-chart.fs-1.mb-2
+            h5.card-title Relatório Animais x Despesas
+            p.card-text Veja o balanço entre vendas de animais e despesas.
+      .col-md-3.mb-3
+        a.card.text-decoration-none(href="/relatorios/vendas-por-vendedor")
+          .card-body.text-center
+            i.bi.bi-graph-up-arrow.fs-1.mb-2
+            h5.card-title Relatório Vendas de animais 
+            p.card-text Veja os totais de vendas de animais por sócio.
+      if user && user.roles && user.roles.includes('ROLE_ADMIN')
+        .col-md-3.mb-3
+          a.card.text-decoration-none(href="/pessoas")
+            .card-body.text-center
+              i.bi.bi-people.fs-1.mb-2
+              h5.card-title Pessoas
+              p.card-text Cadastro e gestão de pessoas.
+        .col-md-3.mb-3
+          a.card.text-decoration-none(href="/categorias")
+            .card-body.text-center
+              i.bi.bi-tags.fs-1.mb-2
+              h5.card-title Categorias
+              p.card-text Gerencie categorias de despesas.

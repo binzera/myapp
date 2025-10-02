@@ -18,14 +18,15 @@ html
                 a.nav-link(href="/despesas") Despesas
               li.nav-item
                 a.nav-link(href="/comercio_animais") Comércio de Animais
-              li.nav-item.dropdown
-                a.nav-link.dropdown-toggle(href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false")
-                  | Cadastros Básicos
-                ul.dropdown-menu(aria-labelledby="navbarDropdown")
-                  li
-                    a.dropdown-item(href="/pessoas") Pessoas
-                  li
-                    a.dropdown-item(href="/categorias") Categorias
+              if user && user.roles && user.roles.includes('ROLE_ADMIN')
+                li.nav-item.dropdown
+                  a.nav-link.dropdown-toggle(href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false")
+                    | Cadastros Básicos
+                  ul.dropdown-menu(aria-labelledby="navbarDropdown")
+                    li
+                      a.dropdown-item(href="/pessoas") Pessoas
+                    li
+                      a.dropdown-item(href="/categorias") Categorias
               li.nav-item.dropdown
                 a.nav-link.dropdown-toggle(href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false")
                   | Relatórios
