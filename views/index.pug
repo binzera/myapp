@@ -18,6 +18,12 @@ block content
             h5.card-title Comércio de Animais
             p.card-text Controle de vendas e compras de animais.
       .col-md-3.mb-3
+        a.card.text-decoration-none(href="/rebanho")
+          .card-body.text-center
+            i.bi.bi-gender-ambiguous.fs-1.mb-2
+            h5.card-title Rebanho
+            p.card-text Cadastro e controle do rebanho.
+      .col-md-3.mb-3
         a.card.text-decoration-none(href="/relatorios/despesas-por-categoria")
           .card-body.text-center
             i.bi.bi-bar-chart-line.fs-1.mb-2
@@ -33,7 +39,7 @@ block content
         a.card.text-decoration-none(href="/relatorios/vendas-por-vendedor")
           .card-body.text-center
             i.bi.bi-graph-up-arrow.fs-1.mb-2
-            h5.card-title Relatório Vendas de animais 
+            h5.card-title Relatório Vendas de animais
             p.card-text Veja os totais de vendas de animais por sócio.
       if user && user.roles && user.roles.includes('ROLE_ADMIN')
         .col-md-3.mb-3

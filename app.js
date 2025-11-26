@@ -15,6 +15,7 @@ var pessoasRouter = require('./routes/pessoas');
 var relatoriosRouter = require('./routes/relatorios');
 var relatoriosAnimaisDespesasRouter = require('./routes/relatorios_animais_despesas');
 var authRouter = require('./routes/auth');
+var rebanhoRouter = require('./routes/rebanho');
 
 var app = express();
 var session = require('express-session');
@@ -32,10 +33,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Sessão - use uma SECRET forte via variável de ambiente
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  console.warn('Warning: SESSION_SECRET não está definida. Usando segredo inseguro para desenvolvimento. Defina SESSION_SECRET no .env ou nas variáveis de ambiente.');
+}
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'minha_chave_secreta',
+  secret: sessionSecret || 'minha_chave_secreta',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // somente HTTPS em produção
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000 // 1 dia
+  }
+  // Atenção: o store padrão (MemoryStore) não é adequado para produção.
+  // Para produção, configure um store persistente (redis, connect-mongo, etc.).
 }));
 
 
@@ -64,6 +78,7 @@ app.use('/pessoas', pessoasRouter);
 app.use('/relatorios', relatoriosRouter);
 app.use('/relatorios/animais-despesas', relatoriosAnimaisDespesasRouter);
 app.use('/auth', authRouter);
+app.use('/rebanho', rebanhoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

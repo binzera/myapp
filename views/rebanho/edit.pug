@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  .container.mt-5
+    h1.mb-3 Editar Rebanho
+    if errors
+      .alert.alert-danger
+        ul
+          each err in errors
+            li= err
+    form(method="POST" action=`/rebanho/${rebanho.id}/edit`)
+      .mb-3
+        label.form-label(for="sexo") Sexo
+        select.form-select(name="sexo" id="sexo")
+          option(value="") -- Selecionar --
+          - const selSexo = (form && form.sexo) || rebanho.get('sexo')
+          option(value="M" selected=(selSexo === 'M')) Macho
+          option(value="F" selected=(selSexo === 'F')) Fêmea
+      .mb-3
+        - const currentYear = new Date().getFullYear()
+        label.form-label(for="ano") Ano
+        - const valAno = (form && form.ano) || rebanho.get('ano') || currentYear
+        input.form-control(type="number" name="ano" id="ano" min="1900" max=currentYear value=valAno)
+      .mb-3
+        label.form-label(for="idade") Idade
+        - const valIdade = (form && form.idade) || rebanho.get('idade')
+        input.form-control(type="text" name="idade" id="idade" value=valIdade)
+      .mb-3
+        label.form-label(for="proprietario") Proprietário
+        - const valProp = (form && form.proprietario) || rebanho.get('proprietario')
+        select.form-select(name="proprietario" id="proprietario")
+          option(value="") -- Selecionar --
+          each p in pessoas
+            option(value=p.id selected=(valProp === p.id))= p.get('nome')
+      .mb-3
+        label.form-label(for="quantidade") Quantidade
+        - const valQtd = (form && form.quantidade) || rebanho.get('quantidade')
+        input.form-control(type="number" name="quantidade" id="quantidade" min="1" step="1" value=valQtd)
+      button.btn.btn-primary(type="submit") Salvar
+      a.btn.btn-secondary(href="/rebanho" style="margin-left:8px;") Cancelar

@@ -45,58 +45,59 @@ block content
           td(colspan="5") Total de despesas na página
           td.text-center= vlTotalDespesas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
           td
-    div
-      if totalPages > 1
-        nav(aria-label="Paginação de despesas" style="display: flex; justify-content: flex-end;")
-          ul.pagination.mt-2
-            // Botão Primeira página
-            if page > 1
-              li.page-item
-                a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=1`) Primeira
-            else
-              li.page-item.disabled
-                span.page-link Primeira
-            // Botão Anterior
-            if page > 1
-              li.page-item
-                a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${page-1}`) «
-            else
-              li.page-item.disabled
-                span.page-link «
-            // Números de página (máximo 5 ao redor da atual)
-            - const start = Math.max(1, page - 2)
-            - const end = Math.min(totalPages, page + 2)
-            if start > 1
-              li.page-item.disabled
-                span.page-link ...
-            each p in Array(end - start + 1).fill().map((_, i) => start + i)
-              if p === page
-                li.page-item.active
-                  span.page-link= p
-              else
-                li.page-item
-                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${p}`)= p
-            if end < totalPages
-              li.page-item.disabled
-                span.page-link ...
-            // Botão Próxima
-            if page < totalPages
-              li.page-item
-                a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${page+1}`) »
-            else
-              li.page-item.disabled
-                span.page-link »
-            // Botão Última página
-            if page < totalPages
-              li.page-item
-                a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${totalPages}`) Última
-            else
-              li.page-item.disabled
-                span.page-link Última
-    div.mt-2
+    div(style="display: flex; gap: 10px; justify-content: space-between; align-items: center;")
+      div.mt-2
         a.btn.btn-secondary(href="/", style="margin-right: 5px;") Voltar
         if user && user.roles && user.roles.includes('ROLE_ADMIN')
           a.btn.btn-primary(href=`/despesas/add?ano=${anoSelecionado ? anoSelecionado : '0'}&page=${page}&descricaoFiltro=${descricaoFiltro}`) Adicionar
+      if totalPages > 1
+        div.mt-2
+          nav(aria-label="Paginação de despesas" style="justify-content: flex-end;")
+            ul.pagination.mt-2
+              // Botão Primeira página
+              if page > 1
+                li.page-item
+                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=1`) Primeira
+              else
+                li.page-item.disabled
+                  span.page-link Primeira
+              // Botão Anterior
+              if page > 1
+                li.page-item
+                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${page-1}`) «
+              else
+                li.page-item.disabled
+                  span.page-link «
+              // Números de página (máximo 5 ao redor da atual)
+              - const start = Math.max(1, page - 2)
+              - const end = Math.min(totalPages, page + 2)
+              if start > 1
+                li.page-item.disabled
+                  span.page-link ...
+              each p in Array(end - start + 1).fill().map((_, i) => start + i)
+                if p === page
+                  li.page-item.active
+                    span.page-link= p
+                else
+                  li.page-item
+                    a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${p}`)= p
+              if end < totalPages
+                li.page-item.disabled
+                  span.page-link ...
+              // Botão Próxima
+              if page < totalPages
+                li.page-item
+                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${page+1}`) »
+              else
+                li.page-item.disabled
+                  span.page-link »
+              // Botão Última página
+              if page < totalPages
+                li.page-item
+                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${totalPages}`) Última
+              else
+                li.page-item.disabled
+                  span.page-link Última
     script.
       document.getElementById('descricaoFiltro').addEventListener('input', function() {
         var filtro = this.value.toLowerCase();

@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  .container.mt-5
+    h1.mb-3 Rebanho
+    table.table.table-striped.table-hover
+      thead
+        tr
+          th Sexo
+          th Ano
+          th Idade
+          th Proprietário
+          th.text-center Quantidade
+          th.text-center Ações
+      tbody
+        each r in rebanhos
+          tr
+            - const sexoVal = r.get('sexo')
+            td= sexoVal === 'M' ? 'Macho' : (sexoVal === 'F' ? 'Fêmea' : (sexoVal || 'N/A'))
+            td= r.get('ano') || 'N/A'
+            td= r.get('idade')
+            td= r.get('proprietarioNome')
+            td.text-center= r.get('quantidade')
+            td.text-center
+              if user && user.roles && user.roles.includes('ROLE_ADMIN')
+                a.badge.bg-warning.text-dark(href=`/rebanho/${r.id}/edit`, style="margin-right: 5px; cursor:pointer;")
+                  i.bi.bi-pencil
+                form(action=`/rebanho/${r.id}/delete` method="POST" style="display:inline;")
+                  button.badge.bg-danger(type="submit", style="border:none; cursor:pointer;")
+                    i.bi.bi-trash
+    a.btn.btn-secondary(href="/", style="margin-right: 5px;") Voltar
+    if user && user.roles && user.roles.includes('ROLE_ADMIN')
+      a.btn.btn-primary(href="/rebanho/add") Adicionar
