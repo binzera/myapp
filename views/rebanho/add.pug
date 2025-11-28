@@ -17,7 +17,11 @@ block content
           option(value="F" selected=(form && form.sexo === 'F')) Fêmea
       .mb-3
         label.form-label(for="idade") Idade
-        input.form-control(type="text" name="idade" id="idade" value=(form && form.idade) || '')
+        select.form-select(name="idade" id="idade")
+          - const ageOptions = ['0-12','13-24','25-36','+36']
+          option(value="") -- Selecionar --
+          each opt in ageOptions
+            option(value=opt selected=(form && form.idade === opt))= opt
       .mb-3
         - const currentYear = new Date().getFullYear()
         label.form-label(for="ano") Ano

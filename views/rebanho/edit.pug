@@ -23,8 +23,12 @@ block content
         input.form-control(type="number" name="ano" id="ano" min="1900" max=currentYear value=valAno)
       .mb-3
         label.form-label(for="idade") Idade
-        - const valIdade = (form && form.idade) || rebanho.get('idade')
-        input.form-control(type="text" name="idade" id="idade" value=valIdade)
+        - const ageOptions = ['0-12','13-24','25-36','+36']
+        - const selIdade = (form && form.idade) || rebanho.get('idade')
+        select.form-select(name="idade" id="idade")
+          option(value="") -- Selecionar --
+          each opt in ageOptions
+            option(value=opt selected=(selIdade === opt))= opt
       .mb-3
         label.form-label(for="proprietario") Proprietário
         - const valProp = (form && form.proprietario) || rebanho.get('proprietario')

@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  .container
+    h1 Rebanho por Ano (todos os proprietários)
+
+    form(method='get' action='/relatorios/rebanho-por-proprietario' class='row g-3 mb-4')
+      .col-md-3
+        label.form-label(for='ano') Ano
+        select.form-select(name='ano' id='ano')
+          option(value='') -- Todos --
+          each a in anos
+            option(value=a selected=(a==anoSelecionado))= a
+      .col-md-2.align-self-end
+        button.btn.btn-primary(type='submit') Filtrar
+
+    if rows && rows.length
+      - const sexoLabel = s => (s=='M' ? 'Macho' : (s=='F' ? 'Fêmea' : s));
+      table.table.table-striped.table-sm
+        thead
+          tr
+            th Proprietário
+            th Sexo
+            th Idade
+            th.text-end Quantidade
+        tbody
+          - let totalGeral = 0;
+          each r in rows
+            - totalGeral += r.quantidade;
+            tr
+              td= r.proprietarioNome
+              td= sexoLabel(r.sexo)
+              td= r.idade
+              td.text-end= r.quantidade
+        tfoot
+          tr
+            td(colspan='3') Total
+            td.text-end= totalGeral
+    else
+      p.text-muted Nenhum dado encontrado para os filtros selecionados.

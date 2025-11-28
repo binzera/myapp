@@ -44,7 +44,8 @@ router.post('/add', isAdmin, async (req, res) => {
   const { sexo, idade, proprietario, quantidade, ano } = req.body;
   const errors = [];
   if (!sexo || !['M', 'F'].includes(sexo)) errors.push('Sexo inválido.');
-  if (!idade || String(idade).trim() === '') errors.push('Idade é obrigatória.');
+  const allowedAges = ['0-12','13-24','25-36','+36'];
+  if (!idade || !allowedAges.includes(idade)) errors.push('Idade inválida. Selecione uma faixa.');
   if (!proprietario || String(proprietario).trim() === '') errors.push('Proprietário é obrigatório.');
   const qtd = parseFloat(quantidade);
   if (isNaN(qtd) || qtd <= 0) errors.push('Quantidade deve ser maior que zero.');
