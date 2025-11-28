@@ -3,9 +3,10 @@ const router = express.Router();
 const Parse = require('parse/node');
 const Despesa = require('../models/despesa');
 const Categoria = require('../models/categoria');
+const { isAdmin } = require('../middlewares/auth');
 
 // Rota para criar uma nova despesa
-router.post('/', async (req, res) => {
+router.post('/', isAdmin, async (req, res) => {
     const { data, descricao, quantidade, vl_unitario, categoriaId } = req.body;
     const categoria = new Parse.Object('Categoria');
     categoria.id = categoriaId;
@@ -143,7 +144,7 @@ router.get('/add', async function(req, res, next) {
 });
 
 // Rota para processar o formulário de inserção de despesas
-router.post('/add', async (req, res) => {
+router.post('/add', isAdmin, async (req, res) => {
   const { data, descricao, quantidade, vl_unitario, categoriaId } = req.body;
 
   const categoria = new Categoria();
@@ -173,7 +174,7 @@ router.post('/add', async (req, res) => {
 });
 
 // Rota para excluir uma despesa
-router.post('/:id/delete', async (req, res) => {
+router.post('/:id/delete', isAdmin, async (req, res) => {
   const Despesa = Parse.Object.extend('Despesa');
   const query = new Parse.Query(Despesa);
   try {
@@ -204,7 +205,7 @@ router.get('/:id/edit', async function(req, res, next) {
 });
 
 // Rota para processar o formulário de edição de despesas
-router.post('/:id/edit', async (req, res) => {
+router.post('/:id/edit', isAdmin, async (req, res) => {
   const { data, descricao, quantidade, vl_unitario, categoriaId } = req.body;
   const Despesa = Parse.Object.extend('Despesa');
   const query = new Parse.Query(Despesa);

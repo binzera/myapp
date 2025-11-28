@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Parse = require('parse/node');
 const Categoria = require('../models/categoria');
+const { isAdmin } = require('../middlewares/auth');
 
 // Função utilitária para buscar categoria por ID
 async function getCategoriaById(id) {
@@ -10,7 +11,7 @@ async function getCategoriaById(id) {
 }
 
 // Rota para criar uma nova categoria (apenas /add)
-router.post('/add', async (req, res, next) => {
+router.post('/add', isAdmin, async (req, res, next) => {
   const { descricao } = req.body;
   if (!descricao) {
     return res.status(400).render('error', { message: 'Descrição é obrigatória' });
@@ -53,7 +54,7 @@ router.get('/add', (req, res) => {
 });
 
 // Rota para excluir uma categoria
-router.post('/:id/delete', async (req, res, next) => {
+router.post('/:id/delete', isAdmin, async (req, res, next) => {
   try {
     const categoria = await getCategoriaById(req.params.id);
     await categoria.destroy();
@@ -74,7 +75,7 @@ router.get('/:id/edit', async (req, res, next) => {
 });
 
 // Rota para processar o formulário de edição de categorias
-router.post('/:id/edit', async (req, res, next) => {
+router.post('/:id/edit', isAdmin, async (req, res, next) => {
   const { descricao } = req.body;
   try {
     const categoria = await getCategoriaById(req.params.id);

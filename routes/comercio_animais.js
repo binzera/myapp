@@ -3,9 +3,10 @@ const router = express.Router();
 const Parse = require('parse/node');
 const Pessoa = require('../models/pessoa');
 const ComercioAnimais = require('../models/comercio_animais');
+const { isAdmin } = require('../middlewares/auth');
 
 // Rota para criar um novo comércio de animais
-router.post('/', async (req, res) => {
+router.post('/', isAdmin, async (req, res) => {
     const { data, tipo, sexo, vendedor, comprador, quantidade, valor, peso, idade } = req.body;
     const newComercioAnimais = new ComercioAnimais();
     newComercioAnimais.set('data', new Date(data));
@@ -133,7 +134,7 @@ router.get('/add', async function(req, res, next) {
 });
 
 // Rota para processar o formulário de inserção de comércios de animais
-router.post('/add', function(req, res, next) {
+router.post('/add', isAdmin, function(req, res, next) {
   const { data, tipo, sexo, vendedor, comprador, quantidade, valor, peso, idade } = req.body;
 
   const comercioAnimais = new ComercioAnimais();
@@ -153,7 +154,7 @@ router.post('/add', function(req, res, next) {
 });
 
 // Rota para excluir um comércio de animais
-router.post('/:id/delete', function(req, res, next) {
+router.post('/:id/delete', isAdmin, function(req, res, next) {
   const comercioAnimaisId = req.params.id;
 
   const query = new Parse.Query(ComercioAnimais);
@@ -187,7 +188,7 @@ router.get('/:id/edit', async function(req, res, next) {
 });
 
 // Rota para processar o formulário de edição de comércios de animais
-router.post('/:id/edit', function(req, res, next) {
+router.post('/:id/edit', isAdmin, function(req, res, next) {
   const comercioAnimaisId = req.params.id;
   const { data, tipo, sexo, vendedor, comprador, quantidade, valor, peso, idade } = req.body;
 

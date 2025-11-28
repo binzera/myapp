@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Parse = require('parse/node');
 const Pessoa = require('../models/pessoa');
+const { isAdmin } = require('../middlewares/auth');
 
 // Listar todas as pessoas
 router.get('/', async (req, res) => {
@@ -20,7 +21,7 @@ router.get('/add', (req, res) => {
 });
 
 // Cadastrar nova pessoa
-router.post('/add', async (req, res) => {
+router.post('/add', isAdmin, async (req, res) => {
   const { tipo, nome } = req.body;
   const pessoa = new Pessoa();
   pessoa.set('tipo', tipo);
@@ -45,7 +46,7 @@ router.get('/:id/edit', async (req, res) => {
 });
 
 // Editar pessoa
-router.post('/:id/edit', async (req, res) => {
+router.post('/:id/edit', isAdmin, async (req, res) => {
   const { tipo, nome } = req.body;
   const query = new Parse.Query(Pessoa);
   try {
@@ -60,7 +61,7 @@ router.post('/:id/edit', async (req, res) => {
 });
 
 // Excluir pessoa
-router.post('/:id/delete', async (req, res) => {
+router.post('/:id/delete', isAdmin, async (req, res) => {
   const query = new Parse.Query(Pessoa);
   try {
     const pessoa = await query.get(req.params.id);
