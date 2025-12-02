@@ -16,6 +16,15 @@ block content
 
     if rows && rows.length
       - const sexoLabel = s => (s=='M' ? 'Macho' : (s=='F' ? 'Fêmea' : s));
+      - // agrupar por proprietario
+      - const grouped = {};
+      - rows.forEach(function(r){
+      -   const p = r.proprietarioNome || 'Sem proprietário';
+      -   if (!grouped[p]) grouped[p] = { items: [], subtotal: 0 };
+      -   grouped[p].items.push(r);
+      -   grouped[p].subtotal += (parseFloat(r.quantidade) || 0);
+      - });
+      - const proprietarios = Object.keys(grouped).sort();
       table.table.table-striped.table-sm
         thead
           tr
@@ -25,16 +34,25 @@ block content
             th.text-end Quantidade
         tbody
           - let totalGeral = 0;
-          each r in rows
-            - totalGeral += r.quantidade;
-            tr
-              td= r.proprietarioNome
-              td= sexoLabel(r.sexo)
-              td= r.idade
-              td.text-end= r.quantidade
+          each prop in proprietarios
+            - const group = grouped[prop];
+            - totalGeral += group.subtotal;
+            // linha de cabeçalho do proprietário com subtotal
+            tr.table-primary
+              td(colspan='3')
+                strong= prop
+              td.text-end
+                strong= group.subtotal
+            // linhas detalhadas por sexo/idade
+            each item in group.items
+              tr
+                td
+                td= sexoLabel(item.sexo)
+                td= item.idade
+                td.text-end= item.quantidade
         tfoot
           tr
-            td(colspan='3') Total
+            td(colspan='3') Total Geral
             td.text-end= totalGeral
     else
       p.text-muted Nenhum dado encontrado para os filtros selecionados.
