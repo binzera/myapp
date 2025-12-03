@@ -45,6 +45,7 @@ router.get('/', async (req, res) => {
   const Categoria = Parse.Object.extend('Categoria');
   const anos = [];
   let anoSelecionado = req.query.ano;
+  const categoriaSelecionada = req.query.categoria || '';
   if (anoSelecionado == 0) {
     anoSelecionado = null;
   } else if (!anoSelecionado) {
@@ -65,16 +66,23 @@ router.get('/', async (req, res) => {
       anos.push(ano);
     }
 
+    // Monta a query principal
     const query = new Parse.Query(Despesa);
-    // Filtra por ano no backend
+    // Filtra por ano quando informado
     if (anoSelecionado) {
       const startDate = new Date(`${anoSelecionado}-01-01T00:00:00.000Z`);
       const endDate = new Date(`${anoSelecionado}-12-31T23:59:59.999Z`);
       query.greaterThanOrEqualTo('data', startDate);
       query.lessThanOrEqualTo('data', endDate);
     }
+    // Filtra por categoria quando informado
+    if (categoriaSelecionada) {
+      const categoriaObj = new Parse.Object('Categoria');
+      categoriaObj.id = categoriaSelecionada;
+      query.equalTo('categoria', categoriaObj);
+    }
     query.include('categoria');
-    
+
     // Filtro de descrição
     const descricaoFiltro = req.query.descricaoFiltro ? req.query.descricaoFiltro.trim() : '';
     if (descricaoFiltro) {
@@ -125,7 +133,9 @@ router.get('/', async (req, res) => {
       totalPages,
       totalDespesas: count,
       descricaoFiltro,
-      vlTotalDespesas
+      vlTotalDespesas,
+      categorias,
+      categoriaSelecionada
     });
   } catch (err) {
     res.status(500).render('error', { message: 'Erro ao listar despesas', error: err });
@@ -159,12 +169,14 @@ router.post('/add', isAdmin, async (req, res) => {
   despesa.set('categoria', categoria);
   try {
     await despesa.save();
-    // Recupera ano e página da query string
+    // Recupera ano, página e categoria da query string
     const ano = req.body.ano || '';
     const page = req.body.page || '';
+    const categoria = req.body.categoria || '';
     let redirectUrl = '/despesas';
     const params = [];
     if (ano) params.push(`ano=${ano}`);
+    if (categoria) params.push(`categoria=${categoria}`);
     if (page) params.push(`page=${page}`);
     if (params.length) redirectUrl += '?' + params.join('&');
     res.redirect(redirectUrl);
@@ -180,7 +192,17 @@ router.post('/:id/delete', isAdmin, async (req, res) => {
   try {
     const despesa = await query.get(req.params.id);
     await despesa.destroy();
-    res.redirect('/despesas');
+    // Preserve filters after delete
+    const ano = req.body.ano || '';
+    const page = req.body.page || '';
+    const categoria = req.body.categoria || '';
+    let redirectUrl = '/despesas';
+    const params = [];
+    if (ano) params.push(`ano=${ano}`);
+    if (categoria) params.push(`categoria=${categoria}`);
+    if (page) params.push(`page=${page}`);
+    if (params.length) redirectUrl += '?' + params.join('&');
+    res.redirect(redirectUrl);
   } catch (err) {
     res.status(500).render('error', { message: 'Erro ao excluir despesa', error: err });
   }
@@ -195,13 +217,13 @@ router.get('/:id/edit', async function(req, res, next) {
   const queryDespesa = new Parse.Query(Despesa);
   const queryCategoria = new Parse.Query(Categoria);
 
-  try {
-    const despesa = await queryDespesa.get(despesaId);
-    const categorias = await queryCategoria.find();
-    res.render('despesas/edit', { despesa, categorias, anoSelecionado, page });
-  } catch (error) {
-    next(error);
-  }
+    try {
+      const despesa = await queryDespesa.get(despesaId);
+      const categorias = await queryCategoria.find();
+      res.render('despesas/edit', { despesa, categorias, anoSelecionado, page });
+    } catch (error) {
+      next(error);
+    }
 });
 
 // Rota para processar o formulário de edição de despesas
@@ -211,27 +233,29 @@ router.post('/:id/edit', isAdmin, async (req, res) => {
   const query = new Parse.Query(Despesa);
   const categoria = new Categoria();
   categoria.id = categoriaId;
-  try {
-    const despesa = await query.get(req.params.id);
-    despesa.set('data', new Date(data));
-    despesa.set('descricao', descricao);
-    despesa.set('quantidade', parseFloat(quantidade));
-    despesa.set('vl_unitario', parseFloat(vl_unitario));
-    despesa.set('vl_total', parseFloat(quantidade) * parseFloat(vl_unitario));
-    despesa.set('categoria', categoria);
-    await despesa.save();
-    // Recupera ano e página da query string
-    const ano = req.body.ano || '';
-    const page = req.body.page || '';
-    let redirectUrl = '/despesas';
-    const params = [];
-    if (ano) params.push(`ano=${ano}`);
-    if (page) params.push(`page=${page}`);
-    if (params.length) redirectUrl += '?' + params.join('&');
-    res.redirect(redirectUrl);
-  } catch (err) {
-    res.status(500).render('error', { message: 'Erro ao editar despesa', error: err });
-  }
+    try {
+      const despesa = await query.get(req.params.id);
+      despesa.set('data', new Date(data));
+      despesa.set('descricao', descricao);
+      despesa.set('quantidade', parseFloat(quantidade));
+      despesa.set('vl_unitario', parseFloat(vl_unitario));
+      despesa.set('vl_total', parseFloat(quantidade) * parseFloat(vl_unitario));
+      despesa.set('categoria', categoria);
+      await despesa.save();
+      // Recupera ano, página e categoria da query string
+      const ano = req.body.ano || '';
+      const page = req.body.page || '';
+      const categoriaParam = req.body.categoria || '';
+      let redirectUrl = '/despesas';
+      const params = [];
+      if (ano) params.push(`ano=${ano}`);
+      if (categoriaParam) params.push(`categoria=${categoriaParam}`);
+      if (page) params.push(`page=${page}`);
+      if (params.length) redirectUrl += '?' + params.join('&');
+      res.redirect(redirectUrl);
+    } catch (err) {
+      res.status(500).render('error', { message: 'Erro ao editar despesa', error: err });
+    }
 });
 
 module.exports = router;

@@ -13,6 +13,13 @@ block content
       .form-group(style="width: 30%")
         label(for="descricaoFiltro") Filtrar por Descrição
         input#descricaoFiltro.form-control(type="text" name="descricaoFiltro" value=descricaoFiltro placeholder="Digite parte da descrição...")
+      .form-group(style="width: 25%")
+        label(for="categoria") Filtrar por Categoria
+        select#categoria.form-select(name="categoria")
+          option(value="") Todas as categorias
+          each c in categorias
+            - const cid = c.id || c.objectId || ''
+            option(value=cid selected=(cid.toString() === (categoriaSelecionada || '').toString()))= c.get('descricao')
       button.btn.btn-primary(type="submit") Filtrar
     table.table.table-striped.table-hover
       thead
@@ -36,9 +43,12 @@ block content
             td.text-center= despesa.get('vl_total') ? despesa.get('vl_total').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'N/A'              
             td.text-center
               if user && user.roles && user.roles.includes('ROLE_ADMIN')
-                a.btn.btn-outline-warning.btn-sm(href=`/despesas/${despesa.id}/edit?ano=${anoSelecionado ? anoSelecionado : '0'}&page=${page}&descricaoFiltro=${descricaoFiltro}`, style="border:none; cursor:pointer;")
+                a.btn.btn-outline-warning.btn-sm(href=`/despesas/${despesa.id}/edit?ano=${anoSelecionado ? anoSelecionado : '0'}&page=${page}&descricaoFiltro=${descricaoFiltro}&categoria=${categoriaSelecionada}`, style="border:none; cursor:pointer;")
                   i.bi.bi-pencil(title="Editar Despesa")
                 form(action=`/despesas/${despesa.id}/delete` method="POST" style="display:inline;")
+                  input(type='hidden' name='ano' value=anoSelecionado)
+                  input(type='hidden' name='page' value=page)
+                  input(type='hidden' name='categoria' value=categoriaSelecionada)
                   button.btn.btn-outline-danger.btn-sm(type="submit", style="border:none; cursor:pointer;")
                     i.bi.bi-trash(title="Excluir Despesa")
         tr
@@ -49,7 +59,7 @@ block content
       div.mt-2
         a.btn.btn-secondary(href="/", style="margin-right: 5px;") Voltar
         if user && user.roles && user.roles.includes('ROLE_ADMIN')
-          a.btn.btn-primary(href=`/despesas/add?ano=${anoSelecionado ? anoSelecionado : '0'}&page=${page}&descricaoFiltro=${descricaoFiltro}`) Adicionar
+          a.btn.btn-primary(href=`/despesas/add?ano=${anoSelecionado ? anoSelecionado : '0'}&page=${page}&descricaoFiltro=${descricaoFiltro}&categoria=${categoriaSelecionada}`) Adicionar
       if totalPages > 1
         div.mt-2
           nav(aria-label="Paginação de despesas" style="justify-content: flex-end;")
@@ -57,14 +67,14 @@ block content
               // Botão Primeira página
               if page > 1
                 li.page-item
-                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=1`) Primeira
+                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&categoria=${categoriaSelecionada}&page=1`) Primeira
               else
                 li.page-item.disabled
                   span.page-link Primeira
               // Botão Anterior
               if page > 1
                 li.page-item
-                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${page-1}`) «
+                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&categoria=${categoriaSelecionada}&page=${page-1}`) «
               else
                 li.page-item.disabled
                   span.page-link «
@@ -80,21 +90,21 @@ block content
                     span.page-link= p
                 else
                   li.page-item
-                    a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${p}`)= p
+                    a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&categoria=${categoriaSelecionada}&page=${p}`)= p
               if end < totalPages
                 li.page-item.disabled
                   span.page-link ...
               // Botão Próxima
               if page < totalPages
                 li.page-item
-                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${page+1}`) »
+                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&categoria=${categoriaSelecionada}&page=${page+1}`) »
               else
                 li.page-item.disabled
                   span.page-link »
               // Botão Última página
               if page < totalPages
                 li.page-item
-                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&page=${totalPages}`) Última
+                  a.page-link(href=`/despesas?ano=${anoSelecionado ? anoSelecionado : '0'}&descricaoFiltro=${descricaoFiltro}&categoria=${categoriaSelecionada}&page=${totalPages}`) Última
               else
                 li.page-item.disabled
                   span.page-link Última
